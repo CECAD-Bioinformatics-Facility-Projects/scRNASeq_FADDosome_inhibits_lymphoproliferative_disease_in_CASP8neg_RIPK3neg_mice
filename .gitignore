@@ -1,0 +1,6 @@
+.Rproj.usear/
+.Rhistory/
+.Rproj.user
+renv/library/*
+renv/staging/*
+MYREADME.md

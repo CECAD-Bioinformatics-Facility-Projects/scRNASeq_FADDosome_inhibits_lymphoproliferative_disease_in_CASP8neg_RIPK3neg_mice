@@ -1,0 +1,27 @@
+services:
+  rstudio:
+    image: rstudiorenvtidy:4.4.3
+    build:
+     context: ./docker
+    container_name: cdcd
+    ports:
+      - "50705:8787"
+    volumes:
+      - type: "bind"
+        source: "./config"
+        target: "/home/rstudio/.config/rstudio"
+      - type: "bind"
+        source: "."
+        target: "/home/rstudio/project"
+      - type: "bind"
+        source: "$HOME/.cache"
+        target: "/home/rstudio/.cache"
+      - type: "bind"
+        source: "$HOME/Development/ProjectTemplate"
+        target: "/home/rstudio/New"
+    environment:
+      - USERNAME=dmukherjee
+      - USERID=1003
+      - GROUPID=1003
+      - USER=rstudio
+      - PASSWORD=1rstudio
