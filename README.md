@@ -138,61 +138,23 @@ clustering_resolution <- 0.5
 ```
 
 ### Run Analysis
+Open rstudio-server
 ```r
 # Complete pipeline
 tar_make()
-
-# Specific steps
-tar_make(contains("qc"))        # Quality control only
-tar_make(contains("cluster"))   # Clustering only
-tar_make(contains("de"))        # Differential expression only
-
-# Monitor progress
-tar_progress()
 ```
 
 ### Outputs
-- **Seurat objects**: `results/*.qs`
+- **Seurat objects and other R objects**: `results/*.qs`
 - **Plots**: `results/plots/*.pdf`
-- **Tables**: `results/*.csv`
-- **Statistics**: `results/statistics/`
 
 ## (Optional) Reproduction Instructions
 
 ### Reproduce Manuscript Figures
-```r
-# Figure 1: Quality control metrics
-tar_make(figure1_qc_plots)
-# Output: results/figures/figure1_qc_metrics.pdf
-
-# Figure 2: UMAP clustering
-tar_make(figure2_umap_clusters)  
-# Output: results/figures/figure2_umap_clusters.pdf
-
-# Figure 3: Differential expression heatmap
-tar_make(figure3_de_heatmap)
-# Output: results/figures/figure3_de_heatmap.pdf
-
-# Figure 4: Cell type composition
-tar_make(figure4_cell_composition)
-# Output: results/figures/figure4_composition.pdf
-
-# All supplementary figures
-tar_make(contains("supplementary"))
-# Output: results/figures/supplementary/
-
-# Statistical analysis
-tar_make(statistical_analysis)
-# Output: results/statistics/statistical_results.csv
-
-# Complete reproduction (4-6 hours)
-tar_make(manuscript_reproduction)
-```
 
 ## Data Availability
 
 - **Preprocessed data**: https://figshare.com/s/b0aa00e0cb8e70a68429
-- **Raw data**: `data/` directory (samples: Casp8_CS, Casp8_KO, Casp8_WT with replicates)
 - **Demo data**: `data/demo/`
 
 ## Contact
