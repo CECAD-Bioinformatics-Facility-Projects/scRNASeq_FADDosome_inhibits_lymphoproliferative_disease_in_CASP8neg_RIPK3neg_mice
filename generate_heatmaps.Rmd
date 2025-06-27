@@ -1,0 +1,419 @@
+---
+  title: "Single-Cell RNA-Seq analysis of BTLA immune cells in the spleen of RIPK3-/- Casp8CS/CS mice"
+author:
+  - name: "Dr. Ali T. Abdallah"
+email: "ali.abdallah@uni-koeln.de"
+affiliation: "CECAD Research Center - Bioinformatics Facility"
+date: "2024-03-02"
+version: "1.0"
+site: bookdown::bookdown_site
+output:
+  rmdformats::readthedown:
+  toc_depth: 3
+---
+  
+# Heatmaps of preselected genes
+
+```{r fig.width=4.5, fig.height=15}
+
+library(DESeq2)
+# Example usage
+genes <- c(
+  "Wnt1", "Vegfa", "Tnfsf13b", "Tnfsf10", "Tnf", "Thpo", "Tgfb2", "Spp1",
+  "Slurp1", "Ppbp", "Flt4", "Osm", "Ngf", "Lta", "Ltb", "Il1a", "Il1b", "Il2",
+  "Il3", "Il23a", "Il12", "Il7", "Il15", "Il18", "Il17a", "Il1f6", "Il1f5",
+  "Il22", "Il1f8", "Il12a", "Il1f9", "Ifng", "Il10", "Il1f7", "Il1f10",
+  "Ifnab1", "Ifnab", "Ifna1", "Ifna13", "Ifna12", "Ifna4", "Ifna3", 
+  "Ifna2", "Ifna6", "Ifna9", "Ifna8", "Hprt", "Hmgb1", "Gpi", "Gm", 
+  "Gm13280", "Gm12597", "Fas", "Cxcl12", "Cxcl10", "Cxcl11", "Ccl1", 
+  "Csf2", "Csf1", "Cntf", "Ccl5", "Ccl21c", "Ccl20", "Ccl17", "Ccl12"
+) 
+
+desired_sample_order <- c("WTR1", "WTR2", "WTR3", "WTR4",
+                          "KOR1", "KOR2",
+                          "CSR1", "CSR2", "CSR3")
+
+genes <- rev(genes)
+desired_sample_order <- c("WTR1", "WTR2", "WTR3", "WTR4",
+                          "KOR1", "KOR2",
+                          "CSR1", "CSR2", "CSR3")
+
+pp$T %>% colnames()
+
+hms_pp <- list()
+for(ct in names(pp))
+  # Create the heatmap, excluding any genes with missing values:
+  hms_pp[[ct]] <- (plot_pp_heatmap(pp, 
+                                   selected_samples=c("WTR3", "WTR4", "KOR1", "KOR2", "CSR2", "CSR3"),
+                                   cell_type             = ct,
+                                   genes             = genes,
+                                   sample_order      = desired_sample_order, 
+                                   color_palette     = colorRampPalette(
+                                     c("lightblue","lightblue","white",
+                                       "red",  "red"))(100),
+                                   include_nan_genes = FALSE,
+                                   cluster_rows      = FALSE,
+                                   cluster_cols      = FALSE,
+                                   gaps_col          = c(2, 4),
+                                   title=paste0("Heatmap of ", ct, " cells"))) 
+
+hms_pp_full <- list()
+for(ct in names(pp))
+  # Create the heatmap, excluding any genes with missing values:
+  hms_pp_full[[ct]] <- (plot_pp_heatmap(pp,selected_samples=c("WTR3", "WTR4", "KOR1", "KOR2", "CSR2", "CSR3"),
+                                        cell_type             = ct,
+                                        genes             = genes,
+                                        sample_order      = desired_sample_order,
+                                        color_palette     = colorRampPalette(
+                                          c("lightblue","lightblue","white",
+                                            "red",  "red"))(100),
+                                        include_nan_genes = TRUE,
+                                        cluster_rows      = FALSE,
+                                        cluster_cols      = FALSE,
+                                        gaps_col          = c(2, 4),
+                                        title=paste0("Heatmap of ", ct, " cells"))) 
+
+
+pdf("results/hms_pp_selected.pdf", width=3.75, height=15)
+
+hms_pp[[1]]
+hms_pp[[2]]
+hms_pp[[3]]
+hms_pp[[4]]
+hms_pp[[5]]
+hms_pp[[6]]
+hms_pp[[7]]
+hms_pp[[8]]
+
+dev.off()
+
+
+pdf("results/hms_pp.pdf", width=4.5, height=15)
+
+hms_pp[[1]]
+hms_pp[[2]]
+hms_pp[[3]]
+hms_pp[[4]]
+hms_pp[[5]]
+hms_pp[[6]]
+hms_pp[[7]]
+hms_pp[[8]]
+
+dev.off()
+
+pdf("results/hms_pp_full_selected.pdf", width=4.5, height=15)
+
+hms_pp_full[[1]]
+hms_pp_full[[2]]
+hms_pp_full[[3]]
+hms_pp_full[[4]]
+hms_pp_full[[5]]
+hms_pp_full[[6]]
+hms_pp_full[[7]]
+hms_pp_full[[8]]
+
+dev.off()
+
+pdf("results/hms_pp_full.pdf", width=4.5, height=15)
+
+hms_pp_full[[1]]
+hms_pp_full[[2]]
+hms_pp_full[[3]]
+hms_pp_full[[4]]
+hms_pp_full[[5]]
+hms_pp_full[[6]]
+hms_pp_full[[7]]
+hms_pp_full[[8]]
+
+dev.off()
+
+```
+
+
+```{r fig.width=4.5, fig.height=15}
+
+
+
+for(ct in names(pb_res_perCluster_withDDS))
+  print(plot_pp_heatmap_from_pbpdds(
+    pb_res_perCluster_withDDS,
+    cell_type = ct,
+    genes = genes,
+    sample_order = desired_sample_order,
+    color_palette     = colorRampPalette(
+      c("lightblue","lightblue","white",
+        "red",  "red"))(100),
+    include_nan_genes = TRUE,
+    cluster_rows = FALSE,
+    cluster_cols = FALSE,
+    gaps_col = c(4, 6)
+  ))
+
+```
+
+
+# GO enrichment
+```{r fig.height=20, fig.width=20}
+
+
+cell_types <- names(pb_res_perCluster_withDDS)
+contrasts  <- names(pb_res_perCluster_withDDS$T$results)
+direction  <- c(+1, -1)            # keeps same logic, but…
+gprofiler_results <- list()
+
+for (ct in cell_types) {
+  gprofiler_results[[ct]] <- list()
+  for (contrast in contrasts) {
+    gprofiler_results[[ct]][[contrast]] <- vector("list", length(direction))
+    for (i in seq_along(direction)) {
+      dir <- direction[i]
+      if (dir == 1) {
+        genes <- pb_res_perCluster_withDDS[[ct]]$results[[contrast]] |>
+          dplyr::filter(log2FoldChange >  1, padj < 0.05) |>
+          dplyr::pull(gene)
+      } else {
+        genes <- pb_res_perCluster_withDDS[[ct]]$results[[contrast]] |>
+          dplyr::filter(log2FoldChange < -1, padj < 0.05) |>
+          dplyr::pull(gene)
+      }
+      
+      if(dir == 1)
+        direction_text <- "upregulated"
+      if(dir == -1)
+        direction_text <- "downregulated"
+      
+      print(paste0("Running gprofiler2 for ", ct, " ", contrast, " ", direction_text, " genes"))
+      gprofiler_results[[ct]][[contrast]][[i]] <-
+        gprofiler2::gost(
+          genes,
+          organism       = "mmusculus",
+          sources        = c("GO:BP","KEGG","REAC"),
+          user_threshold = 0.05, significant = F,
+          evcodes        = TRUE
+        )
+    }
+  }
+}
+
+
+cyt_df <- (gprofiler_results[["T"]]$`WT vs CS`[[2]]$result |> dplyr::filter(grepl(pattern="cytokine", term_name)))
+chem_df <- (gprofiler_results[["T"]]$`WT vs CS`[[2]]$result |> dplyr::filter(grepl(pattern="chemokine", term_name)))
+cyt_df$cell_type <- "T"
+all <- cyt_df
+if(nrow(chem_df) > 0){
+  chem_df$cell_type <- "T"
+  all <- rbind(all, chem_df)
+}
+
+
+for(ct in names(gprofiler_results)[names(gprofiler_results)!="T"]){
+  cyt_df <- (gprofiler_results[[ct]]$`WT vs CS`[[2]]$result |> dplyr::filter(grepl(pattern="cytokine", term_name)))
+  chem_df <- (gprofiler_results[[ct]]$`WT vs CS`[[2]]$result |> dplyr::filter(grepl(pattern="chemokine", term_name)))
+  if(nrow(chem_df) > 0){
+    chem_df$cell_type <- ct
+    all <- rbind(all, chem_df)
+  }
+  
+  if(nrow(cyt_df) > 0){
+    cyt_df$cell_type <- ct
+    all <- rbind(all, cyt_df)
+  }
+  
+  
+}
+
+source("R/helper.R")  
+all |> dplyr::select(cell_type, term_id, term_name, p_value, intersection) |> dplyr::filter(p_value < .05) |> dt_table(filename="Enrichment_cytokines_and_chemokines") 
+enriched_terms <- 
+  all |> dplyr::select(cell_type, term_id, term_name, p_value, intersection) |> dplyr::filter(p_value < .05) |> dplyr::pull(term_id)
+df_plot <- all |> dplyr::filter(term_id %in% enriched_terms) |> arrange(term_id) |> dplyr::select(term_name, p_value, source, cell_type)
+# order terms by term_name and -log10 p-value so that for each term the entries are ordered by p-value
+df_plot <- df_plot |> dplyr::arrange(term_name, p_value) |> dplyr::mutate(term_name = paste0(term_name, " (", cell_type, ")"))
+df_plot$term_name <- factor(df_plot$term_name, levels = unique(df_plot$term_name))
+df_plot
+ggplot(df_plot |> dplyr::filter(source=="GO:BP"), aes(x=-log10(p_value), y=term_name)) + geom_col() + facet_wrap(~cell_type,ncol=8)
+
+ggplot(df_plot |> dplyr::filter(source=="REAC"), aes(x=-log10(p_value), y=term_name)) + geom_col() + facet_wrap(~cell_type,ncol=8)
+
+```
+
+```{r}
+
+cell_types <- names(pb_res_perCluster_withDDS)
+contrasts  <- names(pb_res_perCluster_withDDS$T$results)
+direction  <- c(+1, -1)            # keeps same logic, but…
+gprofiler_results_combined <- list()
+
+for (ct in cell_types) {
+  gprofiler_results_combined[[ct]] <- list()
+  for (contrast in contrasts) {
+    gprofiler_results_combined[[paste0("cl_",ct,"_",gsub(pattern=" ", replacement = "_",contrast))]] <- vector("list", length(direction))
+    for (i in seq_along(direction)) {
+      dir <- direction[i]
+      if (dir == 1) {
+        genes <- pb_res_combined[[paste0("cl_",ct,"_",gsub(pattern=" ", replacement = "_",contrast))]] |>
+          dplyr::filter(log2FoldChange >  1, padj < 0.05) |>
+          dplyr::pull(gene)
+      } else {
+        genes <-  pb_res_combined[[paste0("cl_",ct,"_",gsub(pattern=" ", replacement = "_",contrast))]]  |>
+          dplyr::filter(log2FoldChange < -1, padj < 0.05) |>
+          dplyr::pull(gene)
+      }
+      
+      if(dir == 1)
+        direction_text <- "upregulated"
+      if(dir == -1)
+        direction_text <- "downregulated"
+      
+      print(paste0("Running gprofiler2 for ", ct, " ", contrast, " ", direction_text, " genes"))
+      gprofiler_results_combined[[paste0("cl_",ct,"_",gsub(pattern=" ", replacement = "_",contrast))]][[i]] <-
+        gprofiler2::gost(
+          genes,
+          organism       = "mmusculus",
+          sources        = c("GO:BP","KEGG","REAC"),
+          user_threshold = 0.05, significant = F,
+          evcodes        = TRUE
+        )
+    }
+  }
+}
+
+
+cyt_df <- (gprofiler_results_combined$cl_T_WT_vs_CS[[2]]$result |> dplyr::filter(grepl(pattern="cytokine", term_name)))
+chem_df <- (gprofiler_results_combined$cl_T_WT_vs_CS[[2]]$result |> dplyr::filter(grepl(pattern="chemokine", term_name)))
+cyt_df$cell_type <- "T"
+all <- cyt_df
+if(nrow(chem_df) > 0){
+  chem_df$cell_type <- "T"
+  all <- rbind(all, chem_df)
+}
+
+
+for(ct in names(gprofiler_results_combined)[names(gprofiler_results_combined)!="cl_T_WT_vs_CS"]){
+  cyt_df <- (gprofiler_results_combined[[ct]][[2]]$result |> dplyr::filter(grepl(pattern="cytokine", term_name)))
+  chem_df <- (gprofiler_results_combined[[ct]][[2]]$result |> dplyr::filter(grepl(pattern="chemokine", term_name)))
+  if(nrow(chem_df) > 0){
+    chem_df$cell_type <- ct
+    all <- rbind(all, chem_df)
+  }
+  
+  if(nrow(cyt_df) > 0){
+    cyt_df$cell_type <- ct
+    all <- rbind(all, cyt_df)
+  }
+  
+  
+}
+
+all |> dplyr::select(cell_type, term_id, term_name, p_value, intersection) |> dplyr::filter(grepl("Cxc", intersection))
+
+```
+
+
+```{r}
+do.call(
+  rbind, 
+  c(
+    list(pb_res_perCluster_withDDS$T$results$`WT vs CS` |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column( cell_type = "T",contrast = "WT vs CS"),
+         pb_res_perCluster_withDDS$T$results$`WT vs KO` |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "T", contrast = "WT vs KO"),
+         pb_res_perCluster_withDDS$T$results$`CS vs KO` |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "T",contrast = "CS vs KO"),
+         pb_res_perCluster_withDDS$B$results$`WT vs CS` |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "B",contrast = "WT vs CS"),
+         pb_res_perCluster_withDDS$B$results$`WT vs KO` |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "B",contrast = "WT vs KO"),
+         pb_res_perCluster_withDDS$B$results$`CS vs KO` |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "B",contrast = "CS vs KO"),
+         pb_res_perCluster_withDDS$MF$results$`WT vs CS` |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "MF",contrast = "WT vs CS"),
+         pb_res_perCluster_withDDS$MF$results$`WT vs KO` |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "MF",contrast = "WT vs KO"),
+         pb_res_perCluster_withDDS$MF$results$`CS vs KO` |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "MF",contrast = "CS vs KO"),
+         pb_res_perCluster_withDDS$DC$results$`WT vs CS` |> dplyr::filter(gene %in% genes) |> 
+           tibble::add_column(cell_type = "DC", contrast = "WT vs CS"),
+         pb_res_perCluster_withDDS$DC$results$`WT vs KO` |> dplyr::filter(gene %in% genes) |> 
+           tibble::add_column(cell_type = "DC",contrast = "WT vs KO"),
+         pb_res_perCluster_withDDS$DC$results$`CS vs KO` |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "DC",contrast = "CS vs KO")))
+) |> arrange(gene)
+
+
+
+do.call(
+  rbind, 
+  c(
+    list(pb_res_combined$cl_T_WT_vs_CS |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column( cell_type = "T",contrast = "WT vs CS"),
+         pb_res_combined$cl_T_WT_vs_KO |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "T", contrast = "WT vs KO"),
+         pb_res_combined$cl_T_CS_vs_KO |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "T",contrast = "CS vs KO"),
+         pb_res_combined$cl_B_WT_vs_CS |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "B",contrast = "WT vs CS"),
+         pb_res_combined$cl_B_WT_vs_KO |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "B",contrast = "WT vs KO"),
+         pb_res_combined$cl_B_CS_vs_KO |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "B",contrast = "CS vs KO"),
+         pb_res_combined$cl_MF_WT_vs_CS |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "MF",contrast = "WT vs CS"),
+         pb_res_combined$cl_MF_WT_vs_KO |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "MF",contrast = "WT vs KO"),
+         pb_res_combined$cl_MF_CS_vs_KO |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "MF",contrast = "CS vs KO"),
+         pb_res_combined$cl_DC_WT_vs_CS |> dplyr::filter(gene %in% genes) |> 
+           tibble::add_column(cell_type = "DC", contrast = "WT vs CS"),
+         pb_res_combined$cl_DC_WT_vs_KO |> dplyr::filter(gene %in% genes) |> 
+           tibble::add_column(cell_type = "DC",contrast = "WT vs KO"),
+         pb_res_combined$cl_T_CS_vs_KO |> dplyr::filter(gene %in% genes) |>
+           tibble::add_column(cell_type = "DC",contrast = "CS vs KO")))
+) |> arrange(gene)
+```
+
+```{r fig.height=20, fig.width=5}
+so.split[["All"]] <- "All"
+
+
+so.split@meta.data
+
+all_pp <- pseudobulk_profiles(so.split, cluster_col = "All", sample_names = "orig.ident")
+combined_pba <- run_pseudobulk_deseq2_perCluster_withDDS(all_pp, colData = colData, condition_col = "condition")
+
+combined_pba$All$`WT vs CS` |> dplyr::filter(gene %in% genes & padj < 0.05)
+
+
+robust_norm_all_hm <- plot_pp_heatmap_from_pbpdds(combined_pba,
+                                                  cell_type             = "All",
+                                                  genes             = genes,
+                                                  sample_order      = desired_sample_order,
+                                                  include_nan_genes = TRUE,,
+                                                  color_palette     = colorRampPalette(
+                                                    c("lightblue","lightblue","white",
+                                                      "red",  "red"))(100),
+                                                  cluster_cols      = FALSE,
+                                                  cluster_rows      = FALSE,
+                                                  gaps_col          = c(4, 6))
+
+
+
+simple_norm_all_hm <- plot_pp_heatmap(all_pp,
+                                      cell_type             = "All",
+                                      genes             = genes,
+                                      sample_order      = desired_sample_order,
+                                      include_nan_genes = FALSE,,
+                                      color_palette     = colorRampPalette(
+                                        c("lightblue","lightblue","white",
+                                          "red",  "red"))(100),
+                                      cluster_cols      = FALSE,
+                                      cluster_rows      = FALSE,
+                                      gaps_col          = c(4, 6), title="Simple Normalization")
+
+
+pdf("results/heatmap_pseudobulk_all_populations_pooled.pdf", width = 5, height = 20)
+simple_norm_all_hm
+robust_norm_all_hm
+dev.off()
+```
+
