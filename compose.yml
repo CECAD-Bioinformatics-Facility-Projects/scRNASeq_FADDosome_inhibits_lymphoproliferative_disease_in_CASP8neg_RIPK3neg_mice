@@ -6,7 +6,7 @@ services:
      dockerfile: ./docker/Dockerfile
     container_name: scrnaseq-fritsch-et-al-2025
     ports:
-      - "56959:8787"
+      - "50362:8787"
     volumes:
       - type: "bind"
         source: "./config"
@@ -17,6 +17,9 @@ services:
       - type: "bind"
         source: "$HOME/.cache"
         target: "/home/rstudio/.cache"
+      - type: "bind"
+        source: "/home/aabdallah/tank/RProjects/Kashkar"
+        target: "/home/rstudio/project/data"
     environment:
       - USERNAME=aabdallah
       - USERID=1000
