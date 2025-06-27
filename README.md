@@ -148,7 +148,7 @@ tar_make()
 - **Seurat objects and other R objects**: `results/*.qs`
 - **Plots**: `results/plots/*.pdf`
 
-## (Optional) Reproduction Instructions
+## Reproduction Instructions
 
 ### Reproduce Manuscript Figures
 
