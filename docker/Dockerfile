@@ -50,8 +50,8 @@ USER rstudio
 WORKDIR /home/rstudio/project
 
 #RUN R -e "renv::install('tidyverse',dependencies=TRUE)"
-COPY renv.lock ./
-COPY renv/ ./renv/
+COPY renv.lock /home/rstudio/project/
+COPY renv/ /home/rstudio/project/renv/
 
 RUN R -e "renv::restore(prompt = FALSE)"
 
