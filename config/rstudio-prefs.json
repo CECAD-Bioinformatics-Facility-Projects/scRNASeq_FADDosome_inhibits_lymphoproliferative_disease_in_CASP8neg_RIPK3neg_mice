@@ -8,7 +8,7 @@
     "rainbow_parentheses": true,
     "code_completion_characters": 2,
     "font_size_points": 11,
-    "editor_theme": "Cobalt",
+    "editor_theme": "Eclipse",
     "server_editor_font_enabled": true,
     "server_editor_font": "Fira Code",
     "posix_terminal_shell": "bash",

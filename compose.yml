@@ -2,10 +2,11 @@ services:
   rstudio:
     image: rstudiorenvtidy:4.4.3
     build:
-     context: ./docker
-    container_name: cdcd
+     context: .
+     dockerfile: ./docker/Dockerfile
+    container_name: scrnaseq-fritsch-et-al-2025
     ports:
-      - "50705:8787"
+      - "56959:8787"
     volumes:
       - type: "bind"
         source: "./config"
@@ -16,12 +17,9 @@ services:
       - type: "bind"
         source: "$HOME/.cache"
         target: "/home/rstudio/.cache"
-      - type: "bind"
-        source: "$HOME/Development/ProjectTemplate"
-        target: "/home/rstudio/New"
     environment:
-      - USERNAME=dmukherjee
-      - USERID=1003
-      - GROUPID=1003
+      - USERNAME=aabdallah
+      - USERID=1000
+      - GROUPID=1000
       - USER=rstudio
       - PASSWORD=1rstudio
