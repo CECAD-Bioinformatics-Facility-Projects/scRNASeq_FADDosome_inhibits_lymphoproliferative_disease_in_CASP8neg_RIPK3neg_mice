@@ -16,7 +16,7 @@ tar_option_set(
                "ggpointdensity", "ggalluvial", "ggforce"))
 
 # Load data
-dir <- "~/tank/RProjects/Kashkar"
+dir <- "data/"
 
 samples <- paste0(dir,list("/Casp8_CS", 
                            "/Casp8_WT_REP1",
