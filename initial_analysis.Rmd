@@ -26,6 +26,17 @@ library(limma)
 library(tibble)
 library(rrvgo)
 library(org.Hs.eg.db)
+# Check for CRAN package 'ashr' and install if needed
+if (!requireNamespace("ashr", quietly = TRUE)) {
+  renv::install("ashr")
+}
+# Check for Bioconductor package 'scDblFinder' and install if needed
+if (!requireNamespace("scDblFinder", quietly = TRUE)) {
+  renv::install("bioc::scDblFinder")
+}
+# Optionally, load them
+library(ashr)
+library(scDblFinder)
 source("R/helper.R")
 source("R/pseudobulk_dea.R")
 source("R/annotation_by_reference.R")
@@ -81,6 +92,8 @@ if(run){
       x <- RunPCA(x, features = features, verbose = FALSE)
   })
   
+  options(future.globals.maxSize = 10 * 1024^3)
+
   seurat_objects.anchors <- 
     FindIntegrationAnchors(object.list = seurat_objects,
                            anchor.features = features,
@@ -185,8 +198,8 @@ if(run){
     subset(seurat_objects.combined, subset = seurat_clusters!=29)
   DefaultAssay(seurat_objects.combined) <- "integrated"
   seurat_objects.combined
-  seurat_objects.combined <- NormalizeData(seurat_objects.combined)
-  seurat_objects.combined <- ScaleData(seurat_objects.combined)
+  #seurat_objects.combined <- NormalizeData(seurat_objects.combined)
+  #seurat_objects.combined <- ScaleData(seurat_objects.combined)
   seurat_objects.combined <- RunPCA(seurat_objects.combined, npcs = 100)
   
   DefaultAssay(seurat_objects.combined) <- "integrated" 
@@ -234,7 +247,40 @@ DimPlot(seurat_objects.combined,
         axis.ticks = element_blank(),
         axis.text = element_blank()) +
   ggtitle("UMAP plot of integrated dataset - Resolution 0.1")
+
+
+seurat_objects.combined@version
+ncol(seurat_objects.combined)
 ```
+
+
+```{r}
+so <- qs::qread("data/seurat_objects.combined.cleansed.annotated.250428.qs")
+
+DimPlot(so,
+        group.by = "integrated_snn_res.0.1", label = TRUE) +
+  NoLegend() +
+  theme(axis.line =element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank()) +
+  ggtitle("UMAP plot of integrated dataset - Resolution 0.1")
+
+
+
+
+so.dbl <- qs::qread("data/seurat_objects.combined.clusterin.doublet_info.qs")
+
+
+
+curr.dbl <- qs::qread("results/seurat_objects.combined.clusterin.doublet_info.qs")
+
+ncol(seurat_objects.combined)
+ncol(so)
+table(so.dbl$scDblFinder.class)
+table(curr.dbl$scDblFinder.class)
+
+```
+
 
 ## Clustering refinement
 ```{r clustering_level2, fig.width=8, fig.height=5, echo=F}
