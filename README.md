@@ -1,14 +1,15 @@
 # scRNASeq Analysis: FADDosome inhibits lymphoproliferative disease in CASP8neg RIPK3neg mice
 
-This repository contains the complete analysis pipeline for single-cell RNA sequencing data investigating FADDosome inhibition effects on lymphoproliferative disease in CASP8-negative, RIPK3-negative mice.
+This repository contains the complete analysis pipeline for single-cell RNA sequencing data of the paper FADDosome inhibition effects on lymphoproliferative disease in CASP8-negative, RIPK3-negative mice, which is needed to reproduce the heatmaps in the corresponding paper.
 
 ## 1. System Requirements
 
-### Operating Systems
+### Operating Systems 
 - **Linux**: Ubuntu 22.04.5 LTS (tested)
+Ideally you should be able to run the pipeline on any operating system which supports the docker version we used to generate the docker container and any other compatible versions. However this was tested on the aforementioned Linux System.
 
 ### Software Dependencies
-- **R**: 4.4.0+ (tested on 4.4.1)
+- **R**: 4.4.0+ (tested o4.4.1)
 - **Rstudio-Server**: Tested with 2025.05.0+496 (Mariposa Orchid) for Ubuntu Focal
 - **Docker**: 28.1.1+
 
@@ -22,11 +23,15 @@ To be able to run it through from scratch without interruption you need the foll
 - **CPU**: 4+ cores recommended
 - **Network**: Internet connection for installation
 
+To be able to run it starting from the Seurat object containing the expression data and the annotation of cell types you need
+- **RAM**: 32 GB RAM
+- **Storage**: About 10 GB free space (50 Recommended)
+- **CPU**: 
 
 ## 2. Installation Guide
 
 ### Prerequisites
-Install Docker and Git on your system.
+Install Docker and Git on your system. 
 
 ### Installation Steps
 
