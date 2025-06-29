@@ -1,21 +1,18 @@
 # scRNASeq Analysis: FADDosome inhibits lymphoproliferative disease in CASP8neg RIPK3neg mice
 
-This repository contains the code needed to reproduce the heatmap from single-cell RNA sequencing data of the paper FADDosome inhibition effects on lymphoproliferative disease in CASP8-negative, RIPK3-negative mice.
+This repository contains the code and environment needed to reproduce the scRNA-Seq pseudobulk heatmaps from the paper FADDosome inhibition effects on lymphoproliferative disease in CASP8-negative, RIPK3-negative mice.
 
 ## 1. System Requirements
 
 ### Operating Systems 
 - **Linux**: Ubuntu 22.04.5 LTS (tested)
-Ideally you should be able to run the code on any operating system which supports 
-the docker version we used to generate the docker container and any other compatible versions. 
-However this was tested on the aforementioned Linux System. **Also it should be
-possible to run the code outside the container if the libraries are installed
-on the host system as well. But this was not tested.**
+- You should be able to run the code on any operating system that supports the Docker version we used to generate the Docker container and any other compatible versions. However, this was tested on the aforementioned Linux System.
+- Ideally, it should be possible to run the code outside the container if the libraries are installed on the host system as well. But this was not tested.
 
 ### Software Dependencies
 It was tested with
 - **R**: 4.4.0+ 
-- **Rstudio-Server**: 2025.05.0+496 (Mariposa Orchid) for Ubuntu Focal
+- **RStudio-Server**: 2025.05.0+496 (Mariposa Orchid) for Ubuntu Focal
 - **Docker**: 28.1.1+
 
 ### R Package Dependencies (managed by renv)
@@ -25,14 +22,9 @@ See renv.lock file.
 To be able to run it you need the following hardware:
 - **RAM**: 8 GB RAM
 - **Storage**: around 50 GB free space at least 
-[for the input you need around 5GB RAM and remaining part is a buffer for the installation of system libraries and R packages for docker]
+[For the input, you need around 5GB, and the remaining space is needed for the installation of system libraries and R packages for Docker]
 - **CPU**: 4+ cores recommended
 - **Network**: Internet connection for installation
-
-To be able to run it starting from the Seurat object containing the expression data and the annotation of cell types you need
-- **RAM**: 32 GB RAM
-- **Storage**: About 10 GB free space (50 Recommended)
-- **CPU**: 
 
 ## 2. Installation Guide
 
@@ -47,9 +39,9 @@ git clone https://github.com/CECAD-Bioinformatics-Facility-Projects/scRNASeq_FAD
 cd scRNASeq_FADDosome_inhibits_lymphoproliferative_disease_in_CASP8neg_RIPK3neg_mice
 ```
 Then you need to run ./SETUP.bash and follow the instructions. This will adjust
-the docker environment to be compatible with yours. When asked
-`How many additional directories would you like to mount?` type 1 and provide
-as source directory the directory where you downloaded the data. As destination
+the Docker environment to be compatible with yours. When asked
+`How many additional directories would you like to mount?` Type 1 and provide
+as the source directory the directory where you downloaded the data. As destination,
 provide /home/rstudio/project/data/
 
 When finishing the setup a random port number will be generated. This port will
@@ -61,18 +53,18 @@ Now you can run:
 docker-compose build
 ```
 
-By default the dockerfile runs the following commands:
+By default, the Dockerfile runs the following commands:
 `RUN renv::restore(prompt=FALSE)`
-Which will install all libraries used in this project. This can take up to 30-45 minutes. 
+This will install all libraries used in this project. This can take up to 30-45 minutes. 
 
-Once the container is build you can run:
+Once the container is built, you can run:
 ```bash
 # Start Docker environment
 docker-compose up -d
 ```
 
-Then you can access RStudio of the container at http://localhost:50362 on you host 
-[REPLACE 50362 with your randomly generated port number which you can find
+Then you can access RStudio of the container at http://localhost:50362 on your host 
+[REPLACE 50362 with your randomly generated port number, which you can find
 in compose.yml]
 
 Username: rstudio
@@ -88,12 +80,12 @@ Password: 1rstudio
 ## 3. Demo
 
 ### Quick Demo
-A subset of the seurat object is provided to test generate heatmap workflow
+A subset of the Seurat object is provided to test the generated heatmap workflow
 
 #### Run Demo
 Open the demo_of_generate_heatmaps.Rmd file within rstudio-server and click
-the Run button and select Run all. It should usually take few seconds until it
-run through. This could also be run outside the container if the corresponding
+the Run button, and select Run all. It should usually take a few seconds until it
+runs through. This could also be run outside the container if the corresponding
 packages are installed.
 
 
@@ -102,8 +94,8 @@ packages are installed.
 containing all the heatmaps you should get.
 
 ## 4. Expected Runtime
-- **Demo**: Few seconds on standard desktop
-- **Full workflow**: 51 minutes
+- **Demo**: A Few seconds on a standard desktop
+- **Fully reproducible workflow of full dataset**: 51 minutes
 
 #### Verify Success
 ```r
@@ -118,16 +110,16 @@ print(demo_obj)
 
 ### Input Data Format
 
-Organize the seurat objects in a folder of your preference and when running
-SETUP.bash do as described in the installation steps.
+Organize the Seurat objects in a folder of your preference, and when running
+SETUP.bash Do as described in the installation steps.
 
 ### Run Analysis
-After running the containing open http://localhost:50362 [according port in compose.yml]
-Klick in the Files pane in rstudio on the demo folder and open the demo_of_generate_heatmaps.Rmd
-file then run the whole Rmd file by clicking on Run and then Run ALL or as a shortcut
+After running the container open http://localhost:50362 [according port in compose.yml]
+Click in the Files pane in RStudio on the demo folder and open the demo_of_generate_heatmaps.Rmd
+file, then run the whole Rmd file by clicking on Run and then Run AL,L or as a shortcut
 Ctrl+Alt+R
 
-To reproduce the paper's heatmaps open the file generate_heatmaps.Rmd and follow
+To reproduce the paper's heatmaps, open the file generate_heatmaps.Rmd and follow
 same steps.
 
 ### Outputs [Figures]
@@ -136,8 +128,8 @@ same steps.
 
 ## Data Availability
 
-- Seurat objects needed to generate the heatmap for demo version as well as
-for the full dataset are available under
+- Seurat objects needed to generate the heatmap for the demo version, as well as
+for the full dataset, are available under
 DOI: 10.6084/m9.figshare.29425877
 Private Link For Reviewer: https://figshare.com/s/5812578d280376b6968b
 
