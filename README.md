@@ -63,6 +63,7 @@ Once the container is build you can run:
 ```bash
 # Start Docker environment
 docker-compose up -d
+```
 
 Then you can access RStudio of the container at http://localhost:50362 on you host 
 [REPLACE 50362 with your randomly generated port number which you can find
