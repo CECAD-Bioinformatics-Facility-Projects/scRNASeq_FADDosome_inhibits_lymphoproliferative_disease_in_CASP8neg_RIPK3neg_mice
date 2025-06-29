@@ -61,38 +61,36 @@ docker-compose up -d
 ```
 
 By default the dockerfile runs the following commands:
-RUN renv::restore(prompt=FALSE)
+`RUN renv::restore(prompt=FALSE)`
+
+Which will install all packages needed to run the pipeline.
 
 ### Installation Time
 
-When running from scratch [counts matrices]:
 - **Docker and R packages**: Installing the container [40-50 minutes first time]
+- **Seurat workflow**: about 30-45 minutes
+- **Generating Heatmaps**: about 1 minute.
 
-When running the seurat object 
+By starting from Seurat object, it will need about 50 minutes to reproduce the 
+heatmap.
 
 ## 3. Demo
 
 ### Quick Demo
-A simulated dataset is provided in `data/demo/` for testing.
+A subset of the seurat object is provided to test generate heatmap workflow
 
 #### Run Demo
-```r
-# Load libraries
-library(targets)
-library(Seurat)
+Open the demo_of_generate_heatmaps.Rmd file within rstudio-server and click
+the Run button and select Run all. It should usually take few seconds until it
+run through.
 
-# Execute demo pipeline
-tar_make()
-```
 
 #### Expected Output
-- `results/demo_seurat_objects.qs`: Processed data
-- `results/plots/qc_metrics.pdf`: Quality control plots
-- `results/plots/umap_clusters.pdf`: UMAP visualization
-- `results/de_results.csv`: Differential expression results
+- `results/demo_seurat_objects.combined.cleansed.annotated.250428.qs`: PDF
+containing all the heatmaps you should get.
 
 #### Expected Runtime
-- **Demo**: 5-10 minutes on standard desktop
+- **Demo**: Few seconds on standard desktop
 - **Full analysis**: 2-4 hours
 
 #### Verify Success
@@ -101,7 +99,7 @@ tar_make()
 file.exists("results/demo_seurat_objects.qs")
 
 # Load results
-demo_obj <- qs::qread("results/demo_seurat_objects.qs")
+demo_obj <- qs::qread("results/demo_seurat_objects.combined.cleansed.annotated.250428.qs")
 print(demo_obj)
 ```
 
