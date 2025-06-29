@@ -109,7 +109,6 @@ containing all the heatmaps you should get.
 ```r
 # Check outputs exist
 file.exists("results/demo_seurat_objects.qs")
-
 # Load results
 demo_obj <- qs::qread("results/demo_seurat_objects.combined.cleansed.annotated.250428.qs")
 print(demo_obj)
@@ -121,7 +120,7 @@ print(demo_obj)
 
 Organize the seurat objects in a folder of your preference and when running
 SETUP.bash do as described in the installation steps.
-```
+
 ### Run Analysis
 After running the containing open http://localhost:50362 [according port in compose.yml]
 Klick in the Files pane in rstudio on the demo folder and open the demo_of_generate_heatmaps.Rmd
@@ -132,7 +131,7 @@ To reproduce the paper's heatmaps open the file generate_heatmaps.Rmd and follow
 same steps.
 
 ### Outputs [Figures]
-hm_pp_selected.pdf for the full version and demo_hms_pp_selected.pdf for the demo version.
+`hm_pp_selected.pdf` for the full version and `demo_hms_pp_selected.pdf` for the demo version.
 
 
 ## Data Availability
