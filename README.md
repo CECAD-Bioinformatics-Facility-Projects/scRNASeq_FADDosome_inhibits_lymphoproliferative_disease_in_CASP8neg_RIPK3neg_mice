@@ -1,6 +1,6 @@
 # scRNASeq Analysis: FADDosome inhibits lymphoproliferative disease in CASP8neg RIPK3neg mice
 
-This repository contains the code needed to reproduce the scRNA-Seq pseudobulk heatmaps from the paper FADDosome inhibition effects on lymphoproliferative disease in CASP8-negative, RIPK3-negative mice.
+This repository contains the code and environment needed to reproduce the scRNA-Seq pseudobulk heatmaps from the paper FADDosome inhibition effects on lymphoproliferative disease in CASP8-negative, RIPK3-negative mice.
 
 ## 1. System Requirements
 
