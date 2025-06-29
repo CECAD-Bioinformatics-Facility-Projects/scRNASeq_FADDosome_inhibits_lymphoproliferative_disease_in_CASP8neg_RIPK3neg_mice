@@ -130,8 +130,8 @@ same steps.
 
 - Seurat objects needed to generate the heatmap for the demo version, as well as
 for the full dataset, are available under
-DOI: 10.6084/m9.figshare.29425877
-Private Link For Reviewer: [this you will get from the journal]
+- DOI: 10.6084/m9.figshare.29425877 [unpublished yet]
+- Private Link For Reviewer: [This you got from the journal]
 
 - **Demo data**: Navigate the link and download: demo_seurat_objects.combined.cleansed.annotated.250428.qs 
 or click directly on https://figshare.com/ndownloader/files/55758923 [this option doesn't work because item not published yet]
