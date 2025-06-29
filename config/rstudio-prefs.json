@@ -12,36 +12,9 @@
     "server_editor_font_enabled": true,
     "server_editor_font": "Fira Code",
     "posix_terminal_shell": "bash",
-    "panes": {
-        "quadrants": [
-            "Source",
-            "Console",
-            "TabSet1",
-            "TabSet2",
-            "HiddenTabSet"
-        ],
-        "tabSet1": [
-            "Environment",
-            "History",
-            "Connections",
-            "Build",
-            "VCS",
-            "Tutorial",
-            "Presentation"
-        ],
-        "tabSet2": [
-            "Files",
-            "Plots",
-            "Packages",
-            "Help",
-            "Viewer",
-            "Presentations"
-        ],
-        "hiddenTabSet": [],
-        "console_left_on_top": false,
-        "console_right_on_top": true,
-        "additional_source_columns": 1
-    },
+    "copilot_enabled": true,
+    "copilot_indexing_enabled": true,
+    "copilot_auto_suggestions": true,
     "show_hidden_files": true,
     "jobs_tab_visibility": "shown"
 }
