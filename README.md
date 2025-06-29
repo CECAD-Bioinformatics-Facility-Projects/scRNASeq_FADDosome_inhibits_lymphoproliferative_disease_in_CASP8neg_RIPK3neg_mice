@@ -1,6 +1,6 @@
 # scRNASeq Analysis: FADDosome inhibits lymphoproliferative disease in CASP8neg RIPK3neg mice
 
-This repository contains the complete analysis pipeline for single-cell RNA sequencing data of the paper FADDosome inhibition effects on lymphoproliferative disease in CASP8-negative, RIPK3-negative mice, which is needed to reproduce the heatmaps in the corresponding paper.
+This repository contains the code needed to reproduce the heatmap from single-cell RNA sequencing data of the paper FADDosome inhibition effects on lymphoproliferative disease in CASP8-negative, RIPK3-negative mice.
 
 ## 1. System Requirements
 
@@ -55,29 +55,28 @@ Now you can run:
 docker-compose build
 ```
 
-This will mostly take quite a few time (see below)
+By default the dockerfile runs the following commands:
+`RUN renv::restore(prompt=FALSE)`
+Which will install all libraries used in this project. This can take up to 30-45 minutes. 
 
+Once the container is build you can run:
 ```bash
 # Start Docker environment
 docker-compose up -d
 
-# Access RStudio at http://localhost:50362 [REPLACE 50362 with your randomly generated port number]
-# Username: rstudio, Password: 1rstudio
-```
+Then you can access RStudio of the container at http://localhost:50362 on you host 
+[REPLACE 50362 with your randomly generated port number which you can find
+in compose.yml]
 
-By default the dockerfile runs the following commands:
-`RUN renv::restore(prompt=FALSE)`
+Username: rstudio
+Password: 1rstudio
 
-Which will install all packages needed to run the pipeline.
 
 ### Installation Time
 
 - **Docker and R packages**: Installing the container [40-50 minutes first time]
-- **Seurat workflow**: about 30-45 minutes
 - **Generating Heatmaps**: about 1 minute.
 
-By starting from Seurat object, it will need about 50 minutes to reproduce the 
-heatmap.
 
 ## 3. Demo
 
@@ -87,16 +86,17 @@ A subset of the seurat object is provided to test generate heatmap workflow
 #### Run Demo
 Open the demo_of_generate_heatmaps.Rmd file within rstudio-server and click
 the Run button and select Run all. It should usually take few seconds until it
-run through.
+run through. This could also be run outside the container if the corresponding
+packages are installed.
 
 
 #### Expected Output
 - `results/demo_seurat_objects.combined.cleansed.annotated.250428.qs`: PDF
 containing all the heatmaps you should get.
 
-#### Expected Runtime
+## 4. Expected Runtime
 - **Demo**: Few seconds on standard desktop
-- **Full analysis**: 2-4 hours
+- **Full workflow**: 51 minutes
 
 #### Verify Success
 ```r
@@ -111,31 +111,9 @@ print(demo_obj)
 ## 4. Instructions for Use
 
 ### Input Data Format
-Organize your 10X Genomics data as:
-```
-data/your_experiment/
-├── sample1/
-│   ├── barcodes.tsv.gz
-│   ├── features.tsv.gz
-│   └── matrix.mtx.gz
-└── sample2/
-    └── ...
-```
 
-### Configuration
-Edit `_targets.R` to specify your samples:
-```r
-# Update sample paths
-sample_info <- list(
-  "sample1" = "data/your_experiment/sample1/",
-  "sample2" = "data/your_experiment/sample2/"
-)
-
-# Adjust parameters
-min_genes_per_cell <- 200
-max_genes_per_cell <- 5000
-max_mitochondrial_percent <- 20
-clustering_resolution <- 0.5
+Organize the seurat object in a folder of oyur preference and when running
+SETUP.bash do as described in the installation steps.
 ```
 
 ### Run Analysis
@@ -155,7 +133,8 @@ tar_make()
 
 ## Data Availability
 
-- **Preprocessed data**: https://figshare.com/s/b0aa00e0cb8e70a68429
+- **Preprocessed data**: 10.6084/m9.figshare.29425877 
+seurat_objects.combined.cleansed.annotated.250428
 - **Demo data**: `data/demo/`
 
 ## Contact
