@@ -22,14 +22,9 @@ See renv.lock file.
 To be able to run it you need the following hardware:
 - **RAM**: 8 GB RAM
 - **Storage**: around 50 GB free space at least 
-[for the input you need around 5GB RAM and remaining part is a buffer for the installation of system libraries and R packages for docker]
+[For the input, you need around 5GB, and the remaining space is needed for the installation of system libraries and R packages for Docker]
 - **CPU**: 4+ cores recommended
 - **Network**: Internet connection for installation
-
-To be able to run it starting from the Seurat object containing the expression data and the annotation of cell types you need
-- **RAM**: 32 GB RAM
-- **Storage**: About 10 GB free space (50 Recommended)
-- **CPU**: 
 
 ## 2. Installation Guide
 
