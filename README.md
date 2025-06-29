@@ -7,7 +7,7 @@ This repository contains the code needed to reproduce the heatmap from single-ce
 ### Operating Systems 
 - **Linux**: Ubuntu 22.04.5 LTS (tested)
 - You should be able to run the code on any operating system which supports the docker version we used to generate the docker container and any other compatible versions. However this was tested on the aforementioned Linux System.
-- Ideally you should be possible to run the code outside the container if the libraries are installed on the host system as well. But this was not tested.
+- Ideally it should be possible to run the code outside the container if the libraries are installed on the host system as well. But this was not tested.
 
 ### Software Dependencies
 It was tested with
