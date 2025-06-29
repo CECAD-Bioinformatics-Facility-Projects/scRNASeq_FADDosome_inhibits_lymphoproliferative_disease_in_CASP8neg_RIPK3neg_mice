@@ -6,20 +6,26 @@ This repository contains the code needed to reproduce the heatmap from single-ce
 
 ### Operating Systems 
 - **Linux**: Ubuntu 22.04.5 LTS (tested)
-Ideally you should be able to run the pipeline on any operating system which supports the docker version we used to generate the docker container and any other compatible versions. However this was tested on the aforementioned Linux System.
+Ideally you should be able to run the code on any operating system which supports 
+the docker version we used to generate the docker container and any other compatible versions. 
+However this was tested on the aforementioned Linux System. **Also it should be
+possible to run the code outside the container if the libraries are installed
+on the host system as well. But this was not tested.**
 
 ### Software Dependencies
-- **R**: 4.4.0+ (tested o4.4.1)
-- **Rstudio-Server**: Tested with 2025.05.0+496 (Mariposa Orchid) for Ubuntu Focal
+It was tested with
+- **R**: 4.4.0+ 
+- **Rstudio-Server**: 2025.05.0+496 (Mariposa Orchid) for Ubuntu Focal
 - **Docker**: 28.1.1+
 
 ### R Package Dependencies (managed by renv)
 See renv.lock file.
 
 ### Hardware Requirements
-To be able to run it through from scratch without interruption you need the following hardware:
-- **RAM**: 128 GB RAM
-- **Storage**: 50 GB free space (100 GB recommended)
+To be able to run it you need the following hardware:
+- **RAM**: 8 GB RAM
+- **Storage**: around 50 GB free space at least 
+[for the input you need around 5GB RAM and remaining part is a buffer for the installation of system libraries and R packages for docker]
 - **CPU**: 4+ cores recommended
 - **Network**: Internet connection for installation
 
@@ -109,34 +115,35 @@ demo_obj <- qs::qread("results/demo_seurat_objects.combined.cleansed.annotated.2
 print(demo_obj)
 ```
 
-## 4. Instructions for Use
+## 4. Instructions for Use and Reproducibility
 
 ### Input Data Format
 
-Organize the seurat object in a folder of oyur preference and when running
+Organize the seurat objects in a folder of your preference and when running
 SETUP.bash do as described in the installation steps.
 ```
-
 ### Run Analysis
-Open rstudio-server
-```r
-# Complete pipeline
-tar_make()
-```
+After running the containing open http://localhost:50362 [according port in compose.yml]
+Klick in the Files pane in rstudio on the demo folder and open the demo_of_generate_heatmaps.Rmd
+file then run the whole Rmd file by clicking on Run and then Run ALL or as a shortcut
+Ctrl+Alt+R
 
-### Outputs
-- **Seurat objects and other R objects**: `results/*.qs`
-- **Plots**: `results/plots/*.pdf`
+To reproduce the paper's heatmaps open the file generate_heatmaps.Rmd and follow
+same steps.
 
-## Reproduction Instructions
+### Outputs [Figures]
+hm_pp_selected.pdf for the full version and demo_hms_pp_selected.pdf for the demo version.
 
-### Reproduce Manuscript Figures
 
 ## Data Availability
 
-- **Preprocessed data**: 10.6084/m9.figshare.29425877 
-seurat_objects.combined.cleansed.annotated.250428
-- **Demo data**: `data/demo/`
+- Seurat objects needed to generate the heatmap for demo version as well as
+for the full dataset are available under
+DOI: 10.6084/m9.figshare.29425877
+Private Link For Reviewer: https://figshare.com/s/5812578d280376b6968b
+
+- **Demo data**: Navigate the link and download: demo_seurat_objects.combined.cleansed.annotated.250428.qs 
+or click directly on https://figshare.com/ndownloader/files/55758923
 
 ## Contact
 
