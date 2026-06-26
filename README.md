@@ -1,6 +1,17 @@
 # scRNASeq Analysis: FADDosome inhibits lymphoproliferative disease in CASP8neg RIPK3neg mice
 
-This repository contains the code and environment needed to reproduce the scRNA-Seq pseudobulk heatmaps from the paper FADDosome inhibition effects on lymphoproliferative disease in CASP8-negative, RIPK3-negative mice.
+This repository contains the code and environment needed to reproduce
+figures from the paper on FADDosome inhibition effects on lymphoproliferative
+disease in CASP8-negative, RIPK3-negative mice.
+
+Two independent, self-contained analyses are provided:
+
+| Analysis | Script | Output |
+|----------|--------|--------|
+| **Pseudobulk heatmaps** | `generate_heatmaps.Rmd` (demo: `demo/demo_of_generate_heatmaps.Rmd`) | Heatmap figures |
+| **Erythroid compositional analysis (propeller)** | `propeller_composition_report.Rmd` | Propeller bar plot (PDF/PNG/TIFF/SVG) + source-data Excel |
+
+Both use the same Docker environment, renv lockfile, and input data.
 
 ## 1. System Requirements
 
@@ -126,15 +137,53 @@ same steps.
 `hm_pp_selected.pdf` for the full version and `demo_hms_pp_selected.pdf` for the demo version.
 
 
+## 5. Erythroid Compositional Analysis (Propeller Plot)
+
+This analysis tests whether the proportion of erythroid cells at each
+maturation stage (progenitor, erythroblast, late erythroblast) differs
+across the three CASP8 genotypes (WT, KO, CS), using the propeller
+compositional test (Phipson et al., *Bioinformatics* 2022).
+
+### Run
+
+After the container is running (steps 1–2 above), either:
+
+**Option A — RStudio (interactive):**
+Open `propeller_composition_report.Rmd` in RStudio Server and click
+**Knit**.
+
+**Option B — command line:**
+```bash
+docker compose exec -u rstudio rstudio \
+  Rscript -e 'rmarkdown::render("/home/rstudio/project/propeller_composition_report.Rmd")'
+```
+
+### Expected Output
+
+| File | Description |
+|------|-------------|
+| `propeller_composition_report.html` | Full report with interactive tables (Excel download buttons) |
+| `figures/erythroid_propeller_composition.pdf` | Vector figure (publication) |
+| `figures/erythroid_propeller_composition.tiff` | 300 dpi raster (journal submission) |
+| `figures/erythroid_propeller_composition.png` | 300 dpi raster (presentations) |
+| `figures/erythroid_propeller_tables.xlsx` | Source data + propeller statistics (two sheets) |
+
+### Expected Runtime
+
+About 2–3 minutes on a standard desktop (dominated by loading the Seurat
+object).
+
+---
+
 ## Data Availability
 
-- Seurat objects needed to generate the heatmap for the demo version, as well as
-for the full dataset, are available under
-- DOI: 10.6084/m9.figshare.29425877 [unpublished yet]
-- Private Link For Reviewer: [you got from the journal]
+The annotated Seurat object required for both the heatmap and the propeller
+compositional analysis is available on Figshare:
+DOI: 10.6084/m9.figshare.29425877
+Private Link For Reviewer: https://figshare.com/s/5812578d280376b6968b
 
 - **Demo data**: Navigate the link and download: demo_seurat_objects.combined.cleansed.annotated.250428.qs 
-or click directly on https://figshare.com/ndownloader/files/55758923 [this option doesn't work because item not published yet]
+or click directly on https://figshare.com/ndownloader/files/55758923
 
 - ** Full data object**:  Navigate the link and download: seurat_objects.combined.cleansed.annotated.250428.qs 
 
