@@ -124,6 +124,12 @@ print(demo_obj)
 Organize the Seurat objects in a folder of your preference, and when running
 SETUP.bash Do as described in the installation steps.
 
+### Reproducibility
+
+For exact reproducibility, the analyses use a fixed random seed
+(`set.seed(42)`), so jitter/label placement and any stochastic steps are
+deterministic across runs.
+
 ### Run Analysis
 After running the container open http://localhost:50362 [according port in compose.yml]
 Click in the Files pane in RStudio on the demo folder and open the demo_of_generate_heatmaps.Rmd
@@ -193,3 +199,9 @@ For issues or questions:
 - **Technical problems**: Create GitHub issue
 - **Scientific questions**: Contact corresponding author
 - Include session info (`sessionInfo()`) when reporting bugs
+
+## License
+
+This project is released under the **MIT License** (see `LICENSE`). The custom
+analysis code is available without restriction. If you use it, please cite via
+the `CITATION.cff` file.
