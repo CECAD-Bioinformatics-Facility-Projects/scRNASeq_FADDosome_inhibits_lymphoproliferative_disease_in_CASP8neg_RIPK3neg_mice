@@ -180,7 +180,6 @@ object).
 The annotated Seurat object required for both the heatmap and the propeller
 compositional analysis is available on Figshare:
 DOI: 10.6084/m9.figshare.29425877
-Private Link For Reviewer: https://figshare.com/s/5812578d280376b6968b
 
 - **Demo data**: Navigate the link and download: demo_seurat_objects.combined.cleansed.annotated.250428.qs 
 or click directly on https://figshare.com/ndownloader/files/55758923
