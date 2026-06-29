@@ -52,7 +52,7 @@ cat("Libraries loaded successfully\n")
 ```{r load_data, echo=TRUE}
 # Load the demo processed Seurat object with cell type annotations
 # This object contains a subset of the full dataset for demonstration purposes
-so.split <- qs::qread("../results/demo_seurat_objects.combined.cleansed.annotated.250428.qs")
+so.split <- qs::qread("../data/demo_seurat_objects.combined.cleansed.annotated.250428.qs")
 
 cat("Demo dataset loaded successfully\n")
 cat("Dataset dimensions:", dim(so.split), "\n")
