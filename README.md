@@ -44,21 +44,69 @@ Install Docker and Git on your system.
 
 ### Installation Steps
 
+First, clone the repository (needed for both options below):
+
 ```bash
 # Clone repository
 git clone https://github.com/CECAD-Bioinformatics-Facility-Projects/scRNASeq_FADDosome_inhibits_lymphoproliferative_disease_in_CASP8neg_RIPK3neg_mice.git
 cd scRNASeq_FADDosome_inhibits_lymphoproliferative_disease_in_CASP8neg_RIPK3neg_mice
 ```
-Then you need to run ./SETUP.bash and follow the instructions. This will adjust
-the Docker environment to be compatible with yours. When asked
-`How many additional directories would you like to mount?` Type 1 and provide
-as the source directory the directory where you downloaded the data. As destination,
-provide /home/rstudio/project/data/
 
-When finishing the setup a random port number will be generated. This port will
-be stored in compose.yml
+There are two ways to obtain the analysis environment. **Option A (recommended)**
+uses the prebuilt Docker image, so you reproduce the *exact* environment used for
+the paper without compiling any packages and without depending on package
+repositories (CRAN/Bioconductor) staying online. **Option B** rebuilds the image
+from source using the `Dockerfile` and `renv.lock`.
 
-Now you can run:
+Both options use the same `SETUP.bash` helper to configure mounts and a port.
+Run it now and follow the prompts. When asked
+`How many additional directories would you like to mount?` type `1` and provide
+as the source directory the directory where you downloaded the data, and as
+destination `/home/rstudio/project/data/`. When finishing the setup a random
+port number will be generated and stored in `compose.yml`.
+
+```bash
+./SETUP.bash
+```
+
+---
+
+#### Option A — Use the prebuilt image (recommended)
+
+The prebuilt image `faddosome-casp8-ripk3:4.4.1` contains R and all required
+packages already installed. Download the image tarball from Figshare, load it,
+then start the container — no build step and no package installation are
+required.
+
+> Replace the download URL below with the Figshare link for the image tarball
+> once it is deposited.
+
+**A1. Download and load the image from Figshare:**
+
+```bash
+# Download faddosome-casp8-ripk3-4.4.1.tar.gz from Figshare, then load it:
+docker load < faddosome-casp8-ripk3-4.4.1.tar.gz
+```
+
+Once the image is loaded, start the container **without building**:
+
+```bash
+# Start Docker environment (uses the loaded image, skips the build)
+docker compose up -d
+```
+
+Because `compose.yml` defines both an `image:` and a `build:` section, make sure
+to use `docker compose up` (not `docker compose build`) so the prebuilt image is
+used as-is.
+
+---
+
+#### Option B — Build the image from source (alternative)
+
+This path rebuilds the environment from the `Dockerfile` and `renv.lock`. Use it
+if you cannot obtain the prebuilt image, need a different CPU architecture, or
+want to regenerate the environment from the recipe.
+
 ```bash
 # Build Docker image
 docker-compose build
@@ -66,13 +114,16 @@ docker-compose build
 
 By default, the Dockerfile runs the following commands:
 `RUN renv::restore(prompt=FALSE)`
-This will install all libraries used in this project. This can take up to 30-45 minutes. 
+This will install all libraries used in this project. This can take up to 30-45 minutes.
 
-Once the container is built, you can run:
 ```bash
 # Start Docker environment
 docker-compose up -d
 ```
+
+---
+
+#### Accessing RStudio (both options)
 
 Then you can access RStudio of the container at http://localhost:50362 on your host 
 [REPLACE 50362 with your randomly generated port number, which you can find
@@ -84,7 +135,8 @@ Password: 1rstudio
 
 ### Installation Time
 
-- **Docker and R packages**: Installing the container [40-50 minutes first time]
+- **Option A (prebuilt image)**: a few minutes (download + `docker load`/`pull`); no package installation.
+- **Option B (build from source)**: 40-50 minutes the first time (compiles all R packages).
 - **Generating Heatmaps**: about 1 minute.
 
 
