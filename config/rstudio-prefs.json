@@ -14,7 +14,6 @@
     "posix_terminal_shell": "bash",
     "copilot_enabled": true,
     "copilot_indexing_enabled": true,
-    "copilot_auto_suggestions": true,
     "show_hidden_files": true,
     "jobs_tab_visibility": "shown"
 }
