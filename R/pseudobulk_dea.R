@@ -1,6 +1,6 @@
 pseudobulk_profiles <- function(seurat_obj, sample_names, cluster_col = "integrated_snn_res.0.5") {
   # Determine the union of genes present in any sample's counts layer
-  LayerNames <- Layers(so.split)
+  LayerNames <- Layers(seurat_obj)
   LayerNames <- LayerNames[grepl("counts", LayerNames)]
   
   all_genes <- character()
@@ -299,7 +299,10 @@ run_pseudobulk_deseq2 <- function(pbp,
       dds <- DESeqDataSetFromMatrix(countData = mat, colData = meta, design = per_design)
       dds <- DESeq(dds)
       conds <- levels(dds$condition)
-      pairs <- combn(conds, 2, simplify = FALSE)
+      # Put reference_level last so it is always the denominator (p[2]);
+      # this makes every contrast CS/KO-centred: log2FC = treatment / WT
+      conds_ordered <- c(setdiff(conds, reference_level), reference_level)
+      pairs <- combn(conds_ordered, 2, simplify = FALSE)
       res_list <- setNames(lapply(pairs, function(p) {
         coef <- c(condition_col, p[1], p[2])
         out  <- get_tidy_res(dds, coef)
