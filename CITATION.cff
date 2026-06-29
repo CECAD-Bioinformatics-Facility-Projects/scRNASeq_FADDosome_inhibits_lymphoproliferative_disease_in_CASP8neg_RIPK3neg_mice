@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: >-
+  scRNASeq Analysis: FADDosome inhibits lymphoproliferative disease in
+  CASP8neg RIPK3neg mice
+message: >-
+  If you use this software, please cite it using the metadata from this file.
+type: software
+authors:
+  - given-names: Ali T.
+    family-names: Abdallah
+    affiliation: CECAD Research Center - Bioinformatics Facility
+    email: ali.abdallah@uni-koeln.de
+license: MIT
+repository-code: >-
+  https://github.com/CECAD-Bioinformatics-Facility-Projects/scRNASeq_FADDosome_inhibits_lymphoproliferative_disease_in_CASP8neg_RIPK3neg_mice
+abstract: >-
+  Reproducible analysis code for the manuscript on FADDosome inhibition of
+  lymphoproliferative disease in CASP8-negative, RIPK3-negative mice, including
+  pseudobulk heatmaps and the erythroid compositional (propeller) analysis.
+keywords:
+  - scRNA-seq
+  - CASP8
+  - RIPK3
+  - erythropoiesis
+  - propeller
+  - Seurat
