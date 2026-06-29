@@ -45,6 +45,11 @@ RUN mkdir -p /home/rstudio/project
 RUN chown -R rstudio:rstudio /home/rstudio/.cache
 RUN chown -R rstudio:rstudio /home/rstudio/project
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      libcairo2-dev && \
+    rm -rf /var/lib/apt/lists/*
+
 USER rstudio
 
 WORKDIR /home/rstudio/project
@@ -53,10 +58,17 @@ WORKDIR /home/rstudio/project
 COPY renv.lock /home/rstudio/project/
 COPY renv/ /home/rstudio/project/renv/
 
-RUN R -e "renv::restore(prompt = FALSE)"
+# NOTE: renv::restore is intentionally NOT run at build time.
+# The renv cache is bind-mounted from the host (~/.cache) via compose.yml,
+# so package restoration persists across containers and only needs to be done
+# once by the user after opening RStudio Server for the first time.
+# This keeps the image build fast and resilient to transient Bioconductor /
+# CRAN network failures.
+#RUN R -e "renv::restore(prompt = FALSE)"
 
 RUN echo 'setwd("/home/rstudio/project")\ngetwd()\n' > /home/rstudio/.Rprofile
 RUN echo 'setHook("rstudio.sessionInit", function(newSession) { if (newSession && is.null(rstudioapi::getActiveProject())) rstudioapi::filesPaneNavigate("/home/rstudio/project") }, action = "append")' >> /home/rstudio/.Rprofile
+RUN echo 'if (interactive()) message("\\n>>> First-time setup: run  renv::restore(prompt = FALSE)  to install all project packages.\\n")' >> /home/rstudio/.Rprofile
 
 RUN chown -R rstudio:rstudio /home/rstudio/.Rprofile
 
@@ -85,3 +97,23 @@ USER root
 #      libmagick++-dev \
 #      libsqlite3-dev && \
 #    rm -rf /var/lib/apt/lists/*
+
+# Ensure cmake is available (needed by nloptr and other packages at install time)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cmake && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      libcairo2-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      libuv1-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      libtbb-dev && \
+    rm -rf /var/lib/apt/lists/*
