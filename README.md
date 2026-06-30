@@ -113,8 +113,9 @@ required packages already installed. Download the image tarball from
 Figshare, load it, then start the container — no build step and no package
 installation are required.
 
-> Replace the download URL with the Figshare link for the image tarball
-> once it is deposited.
+> Download the image tarball from
+> <https://doi.org/10.6084/m9.figshare.32835902>
+> (private review link available on request — see [Data Availability](#data-availability)).
 
 ```bash
 # Download faddosome-casp8-ripk3-4.4.1.tar.gz from Figshare into the
@@ -308,14 +309,23 @@ top level (no subdirectory).
 ## Data Availability
 
 The annotated Seurat objects are deposited on Figshare:
-**DOI: 10.6084/m9.figshare.29425877**
+**DOI: <https://doi.org/10.6084/m9.figshare.29425877>**
+
+> **Note for editors and reviewers:** The Figshare deposit is currently
+> under embargo pending publication. A private review link will be shared
+> directly with the editor and reviewers upon request. Once the paper is
+> accepted and published, all files will become publicly accessible via
+> the DOI above and the direct download links below.
 
 - **Demo data** — `demo_seurat_objects.combined.cleansed.annotated.250428.qs`
-  Direct download: <https://figshare.com/ndownloader/files/55758923>
+  - Public link (live now): <https://figshare.com/ndownloader/files/55758923>
 - **Full data** — `seurat_objects.combined.cleansed.annotated.250428.qs`
-  Navigate the DOI page above and download the full `.qs` file.
+  - Public link: *(to be activated on publication — navigate the DOI above)*
+  - Private review link: *(to be shared directly with editors/reviewers on request)*
 - **Prebuilt Docker image tarball** — `faddosome-casp8-ripk3-4.4.1.tar.gz`
-  (~3.7 GB) — to be added to the same Figshare deposit.
+  (~3.7 GB) — DOI: <https://doi.org/10.6084/m9.figshare.32835902>
+  - Public link: *(to be activated on publication)*
+  - Private review link: *(to be shared directly with editors/reviewers on request)*
 
 ---
 
