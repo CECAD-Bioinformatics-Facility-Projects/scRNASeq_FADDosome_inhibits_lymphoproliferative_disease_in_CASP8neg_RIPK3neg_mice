@@ -214,12 +214,12 @@ After the demo completes you should find:
 
 | File | Description |
 |------|-------------|
-| `demo/demo_hms_pp_selected.pdf` | PDF containing the demo heatmaps |
+| `results/demo_hms_pp_selected.pdf` | PDF containing the demo heatmaps |
 
 ### Verify success
 
 ```r
-file.exists("demo/demo_hms_pp_selected.pdf")
+file.exists("results/demo_hms_pp_selected.pdf")
 # TRUE
 ```
 
@@ -238,8 +238,8 @@ A few seconds to about a minute on a standard desktop.
 2. In RStudio Server, open `generate_heatmaps.Rmd`.
 3. Click **Run → Run All** or **Knit**.
 
-**Expected output**: `hm_pp_selected.pdf` in the project root —
-publication heatmaps matching the manuscript figures.
+**Expected output**: `results/hms_pp_selected.pdf` — publication
+heatmaps matching the manuscript figures.
 
 **Expected runtime**: ~51 minutes on a standard desktop, dominated by
 loading the full Seurat object and computing pseudobulk aggregates.

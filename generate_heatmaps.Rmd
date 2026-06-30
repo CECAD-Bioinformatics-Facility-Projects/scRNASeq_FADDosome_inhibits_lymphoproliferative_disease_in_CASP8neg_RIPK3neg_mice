@@ -9,13 +9,15 @@ output:
   rmdformats::readthedown:
     toc_depth: 3
 ---
-  
+
 # Heatmaps of preselected genes
 
-```{r fig.width=4.5, fig.height=15}
+## Setup: load packages and helpers
 
+```{r setup, message=FALSE, warning=FALSE}
 start <- Sys.time()
 library(DESeq2)
+
 # Check for CRAN package 'ashr' and install if needed
 if (!requireNamespace("ashr", quietly = TRUE)) {
   renv::install("ashr")
@@ -24,88 +26,105 @@ if (!requireNamespace("ashr", quietly = TRUE)) {
 if (!requireNamespace("scDblFinder", quietly = TRUE)) {
   renv::install("bioc::scDblFinder")
 }
+
 source("R/pseudobulk_heatmap.R")
 source("R/pseudobulk_dea.R")
+```
 
+## Load and prepare the Seurat object
+
+```{r load-seurat}
 so.split          <- qs::qread("data/seurat_objects.combined.cleansed.annotated.250428.qs")
 so.split[["RNA"]] <- split(so.split[["RNA"]], f = so.split$orig.ident)
-so.split@meta.data$condition <- gsub(pattern="R[1-9]$", replacement = "", so.split$orig.ident)
+so.split@meta.data$condition <- gsub(pattern = "R[1-9]$", replacement = "", so.split$orig.ident)
+```
 
-pp <- pseudobulk_profiles(seurat_obj = so.split,
-                      cluster_col = "cell_type",
-                      sample_names = "orig.ident")
+## Compute per-cell-type pseudobulk profiles
 
-# Example usage
+```{r pseudobulk-profiles}
+pp <- pseudobulk_profiles(seurat_obj   = so.split,
+                          cluster_col  = "cell_type",
+                          sample_names = "orig.ident")
+```
+
+## Define gene set and sample order
+
+```{r gene-set-and-sample-order}
 genes <- c(
   "Wnt1", "Vegfa", "Tnfsf13b", "Tnfsf10", "Tnf", "Thpo", "Tgfb2", "Spp1",
   "Slurp1", "Ppbp", "Flt4", "Osm", "Ngf", "Lta", "Ltb", "Il1a", "Il1b", "Il2",
   "Il3", "Il23a", "Il12", "Il7", "Il15", "Il18", "Il17a", "Il1f6", "Il1f5",
   "Il22", "Il1f8", "Il12a", "Il1f9", "Ifng", "Il10", "Il1f7", "Il1f10",
-  "Ifnab1", "Ifnab", "Ifna1", "Ifna13", "Ifna12", "Ifna4", "Ifna3", 
-  "Ifna2", "Ifna6", "Ifna9", "Ifna8", "Hprt", "Hmgb1", "Gpi", "Gm", 
-  "Gm13280", "Gm12597", "Fas", "Cxcl12", "Cxcl10", "Cxcl11", "Ccl1", 
+  "Ifnab1", "Ifnab", "Ifna1", "Ifna13", "Ifna12", "Ifna4", "Ifna3",
+  "Ifna2", "Ifna6", "Ifna9", "Ifna8", "Hprt", "Hmgb1", "Gpi", "Gm",
+  "Gm13280", "Gm12597", "Fas", "Cxcl12", "Cxcl10", "Cxcl11", "Ccl1",
   "Csf2", "Csf1", "Cntf", "Ccl5", "Ccl21c", "Ccl20", "Ccl17", "Ccl12"
-) 
-
-desired_sample_order <- c("WTR1", "WTR2", "WTR3", "WTR4",
-                          "KOR1", "KOR2",
-                          "CSR1", "CSR2", "CSR3")
-
+)
 genes <- rev(genes)
+
 desired_sample_order <- c("WTR1", "WTR2", "WTR3", "WTR4",
                           "KOR1", "KOR2",
                           "CSR1", "CSR2", "CSR3")
 
 pp$T %>% colnames()
+```
 
+## Build heatmaps (genes with missing values excluded)
+
+```{r build-heatmaps-selected, fig.width=4.5, fig.height=15}
 hms_pp <- list()
-for(ct in names(pp))
-  # Create the heatmap, excluding any genes with missing values:
-  hms_pp[[ct]] <- (plot_pp_heatmap(pp, 
-                                   selected_samples=c("WTR3", "WTR4", "KOR1", "KOR2", "CSR2", "CSR3"),
-                                   cell_type             = ct,
+for (ct in names(pp))
+  hms_pp[[ct]] <- (plot_pp_heatmap(pp,
+                                   selected_samples  = c("WTR3", "WTR4", "KOR1", "KOR2", "CSR2", "CSR3"),
+                                   cell_type         = ct,
                                    genes             = genes,
-                                   sample_order      = desired_sample_order, 
+                                   sample_order      = desired_sample_order,
                                    color_palette     = colorRampPalette(
-                                     c("lightblue","lightblue","white",
-                                       "red",  "red"))(100),
+                                                         c("lightblue","lightblue","white",
+                                                           "red",  "red"))(100),
                                    include_nan_genes = FALSE,
                                    cluster_rows      = FALSE,
                                    cluster_cols      = FALSE,
                                    gaps_col          = c(2, 4),
-                                   title=paste0("Heatmap of ", ct, " cells"))) 
+                                   title = paste0("Heatmap of ", ct, " cells")))
+```
 
+## Build heatmaps (all genes, including missing values)
+
+```{r build-heatmaps-full, fig.width=4.5, fig.height=15}
 hms_pp_full <- list()
-for(ct in names(pp))
-  # Create the heatmap, excluding any genes with missing values:
-  hms_pp_full[[ct]] <- (plot_pp_heatmap(pp,selected_samples=c("WTR3", "WTR4", "KOR1", "KOR2", "CSR2", "CSR3"),
-                                        cell_type             = ct,
+for (ct in names(pp))
+  hms_pp_full[[ct]] <- (plot_pp_heatmap(pp,
+                                        selected_samples  = c("WTR3", "WTR4", "KOR1", "KOR2", "CSR2", "CSR3"),
+                                        cell_type         = ct,
                                         genes             = genes,
                                         sample_order      = desired_sample_order,
                                         color_palette     = colorRampPalette(
-                                          c("lightblue","lightblue","white",
-                                            "red",  "red"))(100),
+                                                              c("lightblue","lightblue","white",
+                                                                "red",  "red"))(100),
                                         include_nan_genes = TRUE,
                                         cluster_rows      = FALSE,
                                         cluster_cols      = FALSE,
                                         gaps_col          = c(2, 4),
-                                        title=paste0("Heatmap of ", ct, " cells"))) 
+                                        title = paste0("Heatmap of ", ct, " cells")))
+```
 
+## Export heatmaps to PDF
 
-pdf("results/hms_pp_selected.pdf", width=3.75, height=15)
-
-hms_pp[[1]]
-hms_pp[[2]]
-hms_pp[[3]]
-hms_pp[[4]]
-hms_pp[[5]]
-hms_pp[[6]]
-hms_pp[[7]]
-hms_pp[[8]]
-
+```{r export-pdf, fig.width=4.5, fig.height=15}
+dir.create("results", showWarnings = FALSE, recursive = TRUE)
+pdf("results/hms_pp_selected.pdf", width = 3.75, height = 15)
+for (i in seq_along(hms_pp)) print(hms_pp[[i]])
 dev.off()
+```
 
-end <- Sys.time()
-print(paste0("Run-time: ", end-start))
+## Run time
+
+```{r runtime, results='asis'}
+end     <- Sys.time()
+elapsed <- end - start
+cat(sprintf("**Total run time:** %.2f %s  \n", as.numeric(elapsed), attr(elapsed, "units")))
+cat(sprintf("- Start: %s  \n", format(start, "%Y-%m-%d %H:%M:%S %Z")))
+cat(sprintf("- End:   %s  \n", format(end,   "%Y-%m-%d %H:%M:%S %Z")))
 ```
 

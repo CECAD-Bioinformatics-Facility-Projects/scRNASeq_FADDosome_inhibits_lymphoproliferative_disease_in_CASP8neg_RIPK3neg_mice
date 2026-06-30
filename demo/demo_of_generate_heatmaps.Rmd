@@ -5,8 +5,6 @@ author:
     email: "ali.abdallah@uni-koeln.de"
     affiliation: "CECAD Research Center - Bioinformatics Facility"
 date: "`r Sys.Date()`"
-version: "1.0 - Demo Version"
-site: bookdown::bookdown_site
 output:
   rmdformats::readthedown:
     toc_depth: 3
@@ -32,6 +30,9 @@ Starting from a processed and annotated Seurat object, this demo:
 ## Data Loading and Setup
 
 ```{r setup, echo=TRUE, message=FALSE, warning=FALSE}
+# Knit relative to project root so renv/activate.R is found and paths are consistent
+knitr::opts_knit$set(root.dir = "/home/rstudio/project")
+
 # Record analysis start time
 start <- Sys.time()
 
@@ -40,8 +41,8 @@ library(DESeq2)  # For differential expression analysis
 library(qs)      # For fast data serialization
 
 # Load custom functions for pseudobulk analysis and heatmap generation
-source("../R/pseudobulk_heatmap.R")  # Contains plot_pp_heatmap function
-source("../R/pseudobulk_dea.R")      # Contains pseudobulk_profiles function
+source("R/pseudobulk_heatmap.R")  # Contains plot_pp_heatmap function
+source("R/pseudobulk_dea.R")      # Contains pseudobulk_profiles function
 
 cat("=== Demo Heatmap Generation Started ===\n")
 cat("Libraries loaded successfully\n")
@@ -52,7 +53,7 @@ cat("Libraries loaded successfully\n")
 ```{r load_data, echo=TRUE}
 # Load the demo processed Seurat object with cell type annotations
 # This object contains a subset of the full dataset for demonstration purposes
-so.split <- qs::qread("../data/demo_seurat_objects.combined.cleansed.annotated.250428.qs")
+so.split <- qs::qread("data/demo_seurat_objects.combined.cleansed.annotated.250428.qs")
 
 cat("Demo dataset loaded successfully\n")
 cat("Dataset dimensions:", dim(so.split), "\n")
@@ -184,7 +185,7 @@ cat("Heatmaps generated for", length(hms_pp), "cell types\n")
 
 ```{r save_results, echo=TRUE}
 # Save heatmaps to PDF for publication
-output_file <- "../results/demo_hms_pp_selected.pdf"
+output_file <- "results/demo_hms_pp_selected.pdf"
 cat("Saving heatmaps to:", output_file, "\n")
 
 # Create publication-quality PDF with specific dimensions
@@ -206,11 +207,11 @@ cat("Publication-ready heatmaps saved successfully!\n")
 
 ```{r summary, echo=TRUE}
 # Calculate analysis runtime
-end <- Sys.time()
+end     <- Sys.time()
 runtime <- end - start
 
 cat("=== Demo Heatmap Generation Summary ===\n")
-cat("Analysis completed in:", round(as.numeric(runtime, units = "mins"), 2), "minutes\n")
+cat(sprintf("Total run time: %.2f %s\n", as.numeric(runtime), attr(runtime, "units")))
 cat("Dataset: Demo subset with", ncol(so.split), "cells across", length(unique(so.split$orig.ident)), "samples\n")
 cat("Cell types analyzed:", length(hms_pp), "\n")
 cat("Genes visualized:", length(genes), "\n")
