@@ -329,17 +329,6 @@ The annotated Seurat objects are deposited on Figshare:
 
 ---
 
-## Troubleshooting
-
-| Symptom | Likely cause | Fix |
-|---|---|---|
-| `there is no package called 'rmarkdown'` (or any other package) | Host `.cache` mounted into the container shadowed the prebuilt library, or you ran `docker compose build` against an unpatched fork. | Edit `compose.yml` and remove any bind mount whose target is `/home/rstudio/.cache`, then `docker compose down && docker compose up -d`. With Option A the image already ships the library. |
-| RStudio login fails | Wrong password | Default is `1rstudio` unless changed in `SETUP.bash`. Check `PASSWORD=` in `compose.yml`. |
-| `Cannot find Seurat object at /home/rstudio/project/data/…` | Data directory not mounted, or filename mismatch | Re-run `SETUP.bash` and double-check the data source path and the exact filename. |
-| Browser shows port not reachable | Different port than expected | Look at the `ports:` line in `compose.yml`; the host port may be different from 50362. |
-
----
-
 ## Contact
 
 For issues or questions:
