@@ -1,9 +1,9 @@
 services:
   rstudio:
-    image: rstudiorenvtidy:4.4.3
+    image: faddosome-casp8-ripk3:4.4.1
     build:
      context: .
-     dockerfile: ./docker/Dockerfile
+     dockerfile: docker/Dockerfile
     container_name: scrnaseq-fritsch-et-al-2025
     ports:
       - "50362:8787"
@@ -15,10 +15,7 @@ services:
         source: "."
         target: "/home/rstudio/project"
       - type: "bind"
-        source: "$HOME/.cache"
-        target: "/home/rstudio/.cache"
-      - type: "bind"
-        source: "/home/aabdallah/tank/RProjects/Kashkar"
+        source: "/home/aabdallah/tank/RProjects/Kashkar/"
         target: "/home/rstudio/project/data"
     environment:
       - USERNAME=aabdallah

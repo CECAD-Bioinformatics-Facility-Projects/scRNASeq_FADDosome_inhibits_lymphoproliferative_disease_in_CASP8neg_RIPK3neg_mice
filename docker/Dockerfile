@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 ###########################################################################################################################################################
 # Extending the following:
 # - Rocker RStudio container using new versioned paradigm: https://github.com/rocker-org/rocker-versioned2/blob/master/dockerfiles/rstudio_4.4.1.Dockerfile
@@ -45,11 +46,6 @@ RUN mkdir -p /home/rstudio/project
 RUN chown -R rstudio:rstudio /home/rstudio/.cache
 RUN chown -R rstudio:rstudio /home/rstudio/project
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      libcairo2-dev && \
-    rm -rf /var/lib/apt/lists/*
-
 USER rstudio
 
 WORKDIR /home/rstudio/project
@@ -58,23 +54,43 @@ WORKDIR /home/rstudio/project
 COPY renv.lock /home/rstudio/project/
 COPY renv/ /home/rstudio/project/renv/
 
-# NOTE: renv::restore is intentionally NOT run at build time.
-# The renv cache is bind-mounted from the host (~/.cache) via compose.yml,
-# so package restoration persists across containers and only needs to be done
-# once by the user after opening RStudio Server for the first time.
-# This keeps the image build fast and resilient to transient Bioconductor /
-# CRAN network failures.
-#RUN R -e "renv::restore(prompt = FALSE)"
+# Make the image fully self-contained and safe to distribute, even when the whole
+# project directory is bind-mounted at runtime:
+#   * RENV_PATHS_LIBRARY puts the library ROOT OUTSIDE /home/rstudio/project so a
+#     runtime bind mount of "." cannot shadow the installed packages. renv appends
+#     a platform prefix (linux-ubuntu-jammy/R-4.4/x86_64-pc-linux-gnu) under it.
+#   * RENV_CONFIG_CACHE_ENABLED=FALSE installs packages as REAL copies into that
+#     library instead of symlinking them into ~/.cache/R/renv.
+#   * NO BuildKit `type=cache` mount is used here: a cache mount is discarded from
+#     the final image, so packages installed "through" it would not actually ship.
+#     Installing into a normal layer bakes the real files into the image.
+# The restore installs flat into RENV_PATHS_LIBRARY; a follow-up `mv` relocates
+# the packages into the platform-prefixed subdirectory renv expects at runtime.
+ENV RENV_PATHS_LIBRARY=/home/rstudio/renv-library
+ENV RENV_CONFIG_CACHE_ENABLED=FALSE
+RUN mkdir -p /home/rstudio/renv-library
+RUN R -e "options(timeout = 1200); renv::restore(library = '/home/rstudio/renv-library', prompt = FALSE)"
+
+# Relocate the flat library into the platform-prefixed path renv computes at runtime
+# (RENV_PATHS_LIBRARY/<platform>/R-<ver>/<arch>). Without this, renv's autoloader
+# sees an empty platform dir and packages fail to load.
+RUN PLATFORM_DIR="/home/rstudio/renv-library/linux-ubuntu-jammy/R-4.4/x86_64-pc-linux-gnu" \
+    && mkdir -p "$PLATFORM_DIR" \
+    && find /home/rstudio/renv-library -maxdepth 1 -mindepth 1 -type d ! -name "linux-*" -exec mv -t "$PLATFORM_DIR" {} +
 
 RUN echo 'setwd("/home/rstudio/project")\ngetwd()\n' > /home/rstudio/.Rprofile
 RUN echo 'setHook("rstudio.sessionInit", function(newSession) { if (newSession && is.null(rstudioapi::getActiveProject())) rstudioapi::filesPaneNavigate("/home/rstudio/project") }, action = "append")' >> /home/rstudio/.Rprofile
-RUN echo 'if (interactive()) message("\\n>>> First-time setup: run  renv::restore(prompt = FALSE)  to install all project packages.\\n")' >> /home/rstudio/.Rprofile
 
 RUN chown -R rstudio:rstudio /home/rstudio/.Rprofile
 
 USER root
 
-# install cmake and NLopt dev library so nloptr can build
+# Persist the external renv library location for every R/RStudio session so that
+# renv's autoloader sets .libPaths() to the baked-in library (which lives outside
+# the bind-mounted project directory) regardless of what the host's renv/ contains.
+RUN echo 'RENV_PATHS_LIBRARY=/home/rstudio/renv-library' >> "$(R RHOME)/etc/Renviron.site"
+RUN chown -R rstudio:rstudio /home/rstudio/renv-library
+
 #RUN apt-get update && \
 #    apt-get install -y --no-install-recommends \
 #      cmake \
@@ -97,23 +113,3 @@ USER root
 #      libmagick++-dev \
 #      libsqlite3-dev && \
 #    rm -rf /var/lib/apt/lists/*
-
-# Ensure cmake is available (needed by nloptr and other packages at install time)
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends cmake && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      libcairo2-dev && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      libuv1-dev && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      libtbb-dev && \
-    rm -rf /var/lib/apt/lists/*

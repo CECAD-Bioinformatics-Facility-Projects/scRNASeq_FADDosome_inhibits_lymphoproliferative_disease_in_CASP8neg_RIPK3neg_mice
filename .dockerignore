@@ -1,0 +1,20 @@
+# Never copy the renv project library into the build context. On the host it is a
+# tree of symlinks pointing into the host user's ~/.cache/R/renv, which would be
+# dangling (and would shadow the image's own library) if copied into the image.
+renv/library/
+renv/local/
+renv/cache/
+renv/staging/
+renv/python/
+renv/sandbox/
+
+# Local caches / VCS / RStudio state that must not leak into the image
+.cache/
+.git/
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# Distribution artifacts
+*.tar.gz

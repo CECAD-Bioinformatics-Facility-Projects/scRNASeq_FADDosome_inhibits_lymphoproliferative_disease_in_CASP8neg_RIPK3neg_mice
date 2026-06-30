@@ -4,3 +4,8 @@
 renv/library/*
 renv/staging/*
 MYREADME.md
+
+# Build/output artifacts not tracked in git
+faddosome-casp8-ripk3-*.tar.gz
+figures/
+*.html

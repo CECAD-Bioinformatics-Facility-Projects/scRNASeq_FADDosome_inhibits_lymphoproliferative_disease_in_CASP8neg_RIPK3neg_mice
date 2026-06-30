@@ -130,7 +130,8 @@ then
   rstudio:
     image: rstudiorenvtidy:4.4.3
     build:
-     context: ./docker
+     context: .
+     dockerfile: docker/Dockerfile
     container_name: $pro
     ports:
       - \"$port:8787\"
