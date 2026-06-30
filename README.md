@@ -113,9 +113,11 @@ required packages already installed. Download the image tarball from
 Figshare, load it, then start the container — no build step and no package
 installation are required.
 
-> Download the image tarball from
+> The image tarball is deposited at
 > <https://doi.org/10.6084/m9.figshare.32835902>
-> (private review link available on request — see [Data Availability](#data-availability)).
+> but is currently under embargo pending publication. A private review
+> link will be provided to editors/reviewers on request (see
+> [Data Availability](#data-availability)).
 
 ```bash
 # Download faddosome-casp8-ripk3-4.4.1.tar.gz from Figshare into the
@@ -293,10 +295,10 @@ loading the Seurat object).
 
 ## 5. Reproducibility
 
-Both analyses set a fixed random seed (`set.seed(42)`) so jitter, label
-placement, and any stochastic steps are deterministic across runs. The
-exact R version (4.4.1) and exact package versions are pinned by the
-Docker image and `renv.lock`.
+The propeller analysis sets a fixed random seed (`set.seed(42)`) so any
+stochastic steps are deterministic across runs. The heatmap analyses are
+fully deterministic (no stochastic steps). The exact R version (4.4.1)
+and exact package versions are pinned by the Docker image and `renv.lock`.
 
 ### Input data format
 
@@ -324,8 +326,8 @@ The annotated Seurat objects are deposited on Figshare:
   - Private review link: *(to be shared directly with editors/reviewers on request)*
 - **Prebuilt Docker image tarball** — `faddosome-casp8-ripk3-4.4.1.tar.gz`
   (~3.7 GB) — DOI: <https://doi.org/10.6084/m9.figshare.32835902>
-  - Public link: *(to be activated on publication)*
-  - Private review link: *(to be shared directly with editors/reviewers on request)*
+  *(under embargo — not yet public; direct download link will be activated on publication;
+  private review link available on request)*
 
 ---
 
