@@ -326,8 +326,6 @@ The annotated Seurat objects are deposited on Figshare:
   - Private review link: *(to be shared directly with editors/reviewers on request)*
 - **Prebuilt Docker image tarball** — `faddosome-casp8-ripk3-4.4.1.tar.gz`
   (~3.7 GB) — DOI: <https://doi.org/10.6084/m9.figshare.32835902>
-  *(under embargo — not yet public; direct download link will be activated on publication;
-  private review link available on request)*
 
 ---
 
