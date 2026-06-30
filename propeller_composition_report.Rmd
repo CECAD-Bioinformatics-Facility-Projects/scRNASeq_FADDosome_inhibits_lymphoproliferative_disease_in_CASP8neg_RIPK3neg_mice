@@ -1,5 +1,5 @@
 ---
-title: "Splenic erythroid composition across CASP8 genotypes - propeller compositional analysis"
+title: "Splenic erythroid composition across CASP8 genotypes — propeller compositional analysis"
 subtitle: "Standalone, fully reproducible script for the publication figure (per-stage fraction of total splenocytes)"
 author:
   - name: "Dr. Ali T. Abdallah"
@@ -60,12 +60,12 @@ Two views of the same propeller analysis are produced:
 
 Everything needed is below, in order:
 
-1. **Methods**: a concise description of why this analysis was chosen and how
+1. **Methods** — a concise description of why this analysis was chosen and how
    the figures are produced.
-2. **Input**: load the annotated Seurat object.
-3. **Erythroid stage assignment** - define the three maturation stages.
-4. **Compositional test**: the propeller statistics.
-5. **Publication figure**: the per-stage bar plot (primary), exported at
+2. **Input** — load the annotated Seurat object.
+3. **Erythroid stage assignment** — define the three maturation stages.
+4. **Compositional test** — the propeller statistics.
+5. **Publication figure** — the per-stage bar plot (primary), exported at
    publication quality. A QQ plot of propeller t-statistics is also produced
    as an internal diagnostic.
 6. **Statistics table** and **session info**.
@@ -89,10 +89,10 @@ erythroid compartment is a direct, quantitative phenotype of the genotype.
 | KO    | KO    | knock-out (protein absent)     | severe lymphoproliferative disease |
 | CS    | KO    | catalytic-dead C362S (present) | anaemia + splenomegaly + inflammation |
 
-### Compositional analysis rationale
+### Why a compositional test, and why propeller
 
-The biological question - *does CASP8 status change how many erythroid cells of
-each maturation stage the spleen contains?* - is a question about **cell-type
+The biological question — *does CASP8 status change how many erythroid cells of
+each maturation stage the spleen contains?* — is a question about **cell-type
 proportions** between groups of biological replicates. Three properties of this
 setting determine the appropriate method:
 
@@ -106,11 +106,11 @@ setting determine the appropriate method:
   contrast, hits a hard p-value floor at these small n (it cannot resolve
   below ≈ 0.057 for n = 3 vs 4).
 - **Information should be shared across the cell types tested.** With few
-  replicates, borrowing variance information across stages stabilizes the
+  replicates, borrowing variance information across stages stabilises the
   per-stage variance estimate.
 
 **propeller** (`speckle` package) is purpose-built for exactly this: it
-(i) computes per-replicate proportions, (ii) applies a **variance-stabilizing
+(i) computes per-replicate proportions, (ii) applies a **variance-stabilising
 arcsine-square-root transform**, and (iii) tests group contrasts with
 **`limma` empirical-Bayes moderated t-statistics**, which pool variance across
 cell types. It therefore respects the animal as the replication unit, handles
@@ -200,7 +200,7 @@ The processed single-cell data have been deposited on Figshare
 
 ---
 
-# Input: annotated Seurat object
+# Input — annotated Seurat object
 
 ```{r load_object}
 # Annotated, cleansed Seurat object (all splenocytes, all genotypes).
@@ -319,7 +319,7 @@ ery_keep <- so_ery@meta.data %>%
   dplyr::filter(ery_stage != "Unassigned_lowDepth")
 all_cluster_label[ery_keep$cell] <- as.character(ery_keep$ery_stage)
 
-# Per-replicate proportions with arcsine-sqrt variance-stabilizing transform.
+# Per-replicate proportions with arcsine-sqrt variance-stabilising transform.
 prop_obj <- speckle::getTransformedProps(
   clusters  = all_cluster_label,
   sample    = so$orig.ident,
@@ -401,7 +401,7 @@ stage_frac_df <- so_ery@meta.data %>%
 
 ---
 
-# Publication figure - per-stage fractions
+# Publication figure — per-stage fractions
 
 The bar plot below is the manuscript figure: it shows the direction and
 magnitude of the genotype-level fractions per maturation stage, with
@@ -512,7 +512,7 @@ erythropoiesis in *Casp8^CS/CS^/Ripk3^-/-^* mice.
 
 ---
 
-# Diagnostic figure - propeller QQ
+# Diagnostic figure — propeller QQ
 
 For each pairwise contrast (CS vs WT, CS vs KO, WT vs KO), the propeller
 moderated t-statistic of each splenic cluster is plotted against its rank
