@@ -11,204 +11,248 @@ Two independent, self-contained analyses are provided:
 | **Pseudobulk heatmaps** | `generate_heatmaps.Rmd` (demo: `demo/demo_of_generate_heatmaps.Rmd`) | Heatmap figures |
 | **Erythroid compositional analysis (propeller)** | `propeller_composition_report.Rmd` | Propeller bar plot (PDF/PNG/TIFF/SVG) + source-data Excel |
 
-Both use the same Docker environment, renv lockfile, and input data.
+Both use the same Docker environment, the same `renv.lock`, and the same
+input data (the annotated Seurat object on Figshare).
+
+---
 
 ## 1. System Requirements
 
-### Operating Systems 
+### Operating systems
 - **Linux**: Ubuntu 22.04.5 LTS (tested)
-- You should be able to run the code on any operating system that supports the Docker version we used to generate the Docker container and any other compatible versions. However, this was tested on the aforementioned Linux System.
-- Ideally, it should be possible to run the code outside the container if the libraries are installed on the host system as well. But this was not tested.
+- Should work on any OS that supports a recent Docker Engine (macOS, Windows
+  with WSL2), but only the Linux configuration above has been tested.
+- It is also possible to run the analyses outside the container if every
+  R package in `renv.lock` is installed on the host — not tested.
 
-### Software Dependencies
-It was tested with
-- **R**: 4.4.0+ 
-- **RStudio-Server**: 2025.05.0+496 (Mariposa Orchid) for Ubuntu Focal
-- **Docker**: 28.1.1+
+### Software dependencies
+Tested with:
+- **Docker Engine**: 28.1.1+ (with `docker compose` v2 plugin)
+- **R**: 4.4.1 (inside the container)
+- **RStudio Server**: rocker/rstudio:4.4.1 base image
+- **Git**: any recent version (for cloning)
 
-### R Package Dependencies (managed by renv)
-See renv.lock file.
+### R package dependencies
+All R package versions are pinned in `renv.lock` and shipped inside the
+prebuilt Docker image (Option A) or installed automatically when the image
+is built (Option B).
 
-### Hardware Requirements
-To be able to run it you need the following hardware:
-- **RAM**: 8 GB RAM
-- **Storage**: around 50 GB free space at least 
-[For the input, you need around 5GB, and the remaining space is needed for the installation of system libraries and R packages for Docker]
+### Hardware
+- **RAM**: 16 GB recommended (8 GB minimum for the demo only; the full
+  Seurat object is large)
+- **Storage**: ~50 GB free
+  - ~5 GB for the input Seurat object
+  - ~10 GB for the loaded Docker image
+  - remainder for intermediate results and outputs
 - **CPU**: 4+ cores recommended
-- **Network**: Internet connection for installation
+- **Network**: required only for the one-time download of the Docker image
+  tarball and the input data
+
+---
 
 ## 2. Installation Guide
 
 ### Prerequisites
-Install Docker and Git on your system. 
+Install Docker (with the `docker compose` v2 plugin) and Git on your system.
 
-### Installation Steps
-
-First, clone the repository (needed for both options below):
+### Step 1 — Clone the repository
 
 ```bash
-# Clone repository
 git clone https://github.com/CECAD-Bioinformatics-Facility-Projects/scRNASeq_FADDosome_inhibits_lymphoproliferative_disease_in_CASP8neg_RIPK3neg_mice.git
 cd scRNASeq_FADDosome_inhibits_lymphoproliferative_disease_in_CASP8neg_RIPK3neg_mice
 ```
 
-There are two ways to obtain the analysis environment. **Option A (recommended)**
-uses the prebuilt Docker image, so you reproduce the *exact* environment used for
-the paper without compiling any packages and without depending on package
-repositories (CRAN/Bioconductor) staying online. **Option B** rebuilds the image
-from source using the `Dockerfile` and `renv.lock`.
+### Step 2 — Download the input data
 
-Both options use the same `SETUP.bash` helper to configure mounts and a port.
-Run it now and follow the prompts. When asked
-`How many additional directories would you like to mount?` type `1` and provide
-as the source directory the directory where you downloaded the data, and as
-destination `/home/rstudio/project/data/`. When finishing the setup a random
-port number will be generated and stored in `compose.yml`.
+Download the annotated Seurat object(s) from Figshare (see
+[Data Availability](#data-availability) for direct links) into a directory
+on your host machine — for example `~/faddosome_data/`. You will mount this
+directory into the container in Step 3.
+
+### Step 3 — Configure mounts and port with `SETUP.bash`
+
+`SETUP.bash` interactively generates `compose.yml` with your project name,
+data mount, host port, and password.
 
 ```bash
 ./SETUP.bash
 ```
 
+Answer the prompts as follows:
+
+| Prompt | Answer |
+|--------|--------|
+| `Project Name` | any name, e.g. `faddosome-repro` |
+| `Mount the working directory…?` | `y` |
+| `Mount the Default R .cache…?` | **`n`** (mounting the host `.cache` shadows the prebuilt R library and will break Option A) |
+| `How many additional directories would you like to mount?` | `1` |
+| `Source` | absolute path to your data directory, e.g. `/home/youruser/faddosome_data` |
+| `Destination` | `/home/rstudio/project/data` |
+| `password` | `y` to keep the default `1rstudio`, or `c` to set your own |
+| `Do you accept…?` | `y` |
+| `Would you like me to start the container?` | `n` (you will start it explicitly in Step 4) |
+
+`SETUP.bash` writes `compose.yml` with `image: faddosome-casp8-ripk3:4.4.1`
+and a randomly chosen free host port. Note the port — you will need it to
+open RStudio in your browser.
+
+### Step 4 — Obtain the analysis environment
+
+There are two ways to obtain the environment.
+**Option A (recommended)** uses the prebuilt Docker image so you reproduce
+the *exact* environment used for the paper without compiling any packages
+and without depending on CRAN/Bioconductor staying online.
+**Option B** rebuilds the image from `Dockerfile` + `renv.lock`.
+
 ---
 
 #### Option A — Use the prebuilt image (recommended)
 
-The prebuilt image `faddosome-casp8-ripk3:4.4.1` contains R and all required
-packages already installed. Download the image tarball from Figshare, load it,
-then start the container — no build step and no package installation are
-required.
+The prebuilt image `faddosome-casp8-ripk3:4.4.1` contains R 4.4.1 and all
+required packages already installed. Download the image tarball from
+Figshare, load it, then start the container — no build step and no package
+installation are required.
 
-> Replace the download URL below with the Figshare link for the image tarball
+> Replace the download URL with the Figshare link for the image tarball
 > once it is deposited.
 
-**A1. Download and load the image from Figshare:**
-
 ```bash
-# Download faddosome-casp8-ripk3-4.4.1.tar.gz from Figshare, then load it:
+# Download faddosome-casp8-ripk3-4.4.1.tar.gz from Figshare into the
+# project root, then load it into your local Docker:
 docker load < faddosome-casp8-ripk3-4.4.1.tar.gz
-```
 
-Once the image is loaded, start the container **without building**:
+# Verify the image is present:
+docker images | grep faddosome-casp8-ripk3
+# Expected:  faddosome-casp8-ripk3   4.4.1   <id>   <date>   ~9 GB
 
-```bash
-# Start Docker environment (uses the loaded image, skips the build)
+# Start the container using the loaded image (DO NOT run `docker compose build`):
 docker compose up -d
 ```
 
-Because `compose.yml` defines both an `image:` and a `build:` section, make sure
-to use `docker compose up` (not `docker compose build`) so the prebuilt image is
+Because `compose.yml` defines both an `image:` and a `build:` section, use
+`docker compose up` (not `docker compose build`) so the prebuilt image is
 used as-is.
 
 ---
 
 #### Option B — Build the image from source (alternative)
 
-This path rebuilds the environment from the `Dockerfile` and `renv.lock`. Use it
-if you cannot obtain the prebuilt image, need a different CPU architecture, or
-want to regenerate the environment from the recipe.
+Use this path if you cannot obtain the prebuilt image, need a different
+CPU architecture, or want to regenerate the environment from the recipe.
 
 ```bash
-# Build Docker image
-docker-compose build
+DOCKER_BUILDKIT=1 docker compose build
+docker compose up -d
 ```
 
-By default, the Dockerfile runs the following commands:
-`RUN renv::restore(prompt=FALSE)`
-This will install all libraries used in this project. This can take up to 30-45 minutes.
-
-```bash
-# Start Docker environment
-docker-compose up -d
-```
+The build installs all R packages listed in `renv.lock` into an external
+library at `/home/rstudio/renv-library` inside the image. Expect 40–60
+minutes the first time (most of it compiling Bioconductor packages).
 
 ---
 
-#### Accessing RStudio (both options)
+### Step 5 — Open RStudio Server in your browser
 
-Then you can access RStudio of the container at http://localhost:50362 on your host 
-[REPLACE 50362 with your randomly generated port number, which you can find
-in compose.yml]
+```
+http://localhost:<PORT>
+```
 
-Username: rstudio
-Password: 1rstudio
+Replace `<PORT>` with the port `SETUP.bash` wrote into `compose.yml` (look
+for the `ports:` entry, e.g. `"50362:8787"` → use `50362`).
 
+| | |
+|---|---|
+| **Username** | `rstudio` |
+| **Password** | `1rstudio` (or whatever you set in `SETUP.bash`) |
 
-### Installation Time
+You should land in the `/home/rstudio/project` directory, with the project
+files in the Files pane.
 
-- **Option A (prebuilt image)**: a few minutes (download + `docker load`/`pull`); no package installation.
-- **Option B (build from source)**: 40-50 minutes the first time (compiles all R packages).
-- **Generating Heatmaps**: about 1 minute.
+### Step 6 — Verify the environment is working
 
+In RStudio's R console:
+
+```r
+source("renv/activate.R")
+.libPaths()[1]
+# Expected: "/home/rstudio/renv-library/linux-ubuntu-jammy/R-4.4/x86_64-pc-linux-gnu"
+
+library(Seurat); library(rmarkdown); library(openxlsx); library(qs)
+# All four should load without errors.
+```
+
+### Stopping the container
+
+```bash
+docker compose down
+```
+
+This stops and removes the container but leaves the image and your data
+intact. To restart later, just run `docker compose up -d` again.
+
+### Installation time
+
+- **Option A (prebuilt image)**: a few minutes (download + `docker load`).
+- **Option B (build from source)**: 40–60 minutes the first time.
+
+---
 
 ## 3. Demo
 
-### Quick Demo
-A subset of the Seurat object is provided to test the generated heatmap workflow
+A small subset of the Seurat object is provided so you can test the
+heatmap workflow end-to-end in under a minute.
 
-#### Run Demo
-Open the demo_of_generate_heatmaps.Rmd file within rstudio-server and click
-the Run button, and select Run all. It should usually take a few seconds until it
-runs through. This could also be run outside the container if the corresponding
-packages are installed.
+### Run the demo
 
+1. In RStudio Server, open `demo/demo_of_generate_heatmaps.Rmd`.
+2. Click **Run → Run All** (or press <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd>).
+3. The notebook will render the demo heatmaps to PDF.
 
-#### Expected Output
-- `results/demo_seurat_objects.combined.cleansed.annotated.250428.qs`: PDF
-containing all the heatmaps you should get.
+### Expected output
 
-## 4. Expected Runtime
-- **Demo**: A Few seconds on a standard desktop
-- **Fully reproducible workflow of full dataset**: 51 minutes
+After the demo completes you should find:
 
-#### Verify Success
+| File | Description |
+|------|-------------|
+| `demo/demo_hms_pp_selected.pdf` | PDF containing the demo heatmaps |
+
+### Verify success
+
 ```r
-# Check outputs exist
-file.exists("results/demo_seurat_objects.qs")
-# Load results
-demo_obj <- qs::qread("results/demo_seurat_objects.combined.cleansed.annotated.250428.qs")
-print(demo_obj)
+file.exists("demo/demo_hms_pp_selected.pdf")
+# TRUE
 ```
 
-## 4. Instructions for Use and Reproducibility
+### Expected runtime
+A few seconds to about a minute on a standard desktop.
 
-### Input Data Format
+---
 
-Organize the Seurat objects in a folder of your preference, and when running
-SETUP.bash Do as described in the installation steps.
+## 4. Reproducing the full analyses
 
-### Reproducibility
+### 4.1 Pseudobulk heatmaps (full dataset)
 
-For exact reproducibility, the analyses use a fixed random seed
-(`set.seed(42)`), so jitter/label placement and any stochastic steps are
-deterministic across runs.
+1. Make sure the full Seurat object (`seurat_objects.combined.cleansed.annotated.250428.qs`,
+   see [Data Availability](#data-availability)) is present in the mounted
+   data directory.
+2. In RStudio Server, open `generate_heatmaps.Rmd`.
+3. Click **Run → Run All** or **Knit**.
 
-### Run Analysis
-After running the container open http://localhost:50362 [according port in compose.yml]
-Click in the Files pane in RStudio on the demo folder and open the demo_of_generate_heatmaps.Rmd
-file, then run the whole Rmd file by clicking on Run and then Run AL,L or as a shortcut
-Ctrl+Alt+R
+**Expected output**: `hm_pp_selected.pdf` in the project root —
+publication heatmaps matching the manuscript figures.
 
-To reproduce the paper's heatmaps, open the file generate_heatmaps.Rmd and follow
-same steps.
+**Expected runtime**: ~51 minutes on a standard desktop, dominated by
+loading the full Seurat object and computing pseudobulk aggregates.
 
-### Outputs [Figures]
-`hm_pp_selected.pdf` for the full version and `demo_hms_pp_selected.pdf` for the demo version.
-
-
-## 5. Erythroid Compositional Analysis (Propeller Plot)
+### 4.2 Erythroid compositional analysis (propeller plot)
 
 This analysis tests whether the proportion of erythroid cells at each
 maturation stage (progenitor, erythroblast, late erythroblast) differs
 across the three CASP8 genotypes (WT, KO, CS), using the propeller
 compositional test (Phipson et al., *Bioinformatics* 2022).
 
-### Run
-
-After the container is running (steps 1–2 above), either:
-
 **Option A — RStudio (interactive):**
-Open `propeller_composition_report.Rmd` in RStudio Server and click
-**Knit**.
+Open `propeller_composition_report.Rmd` and click **Knit**.
 
 **Option B — command line:**
 ```bash
@@ -216,7 +260,7 @@ docker compose exec -u rstudio rstudio \
   Rscript -e 'rmarkdown::render("/home/rstudio/project/propeller_composition_report.Rmd")'
 ```
 
-### Expected Output
+**Expected output:**
 
 | File | Description |
 |------|-------------|
@@ -224,35 +268,64 @@ docker compose exec -u rstudio rstudio \
 | `figures/erythroid_propeller_composition.pdf` | Vector figure (publication) |
 | `figures/erythroid_propeller_composition.tiff` | 300 dpi raster (journal submission) |
 | `figures/erythroid_propeller_composition.png` | 300 dpi raster (presentations) |
+| `figures/erythroid_propeller_composition.svg` | Editable vector |
+| `figures/erythroid_propeller_qq.{pdf,png,svg,tiff}` | Diagnostic QQ plots |
 | `figures/erythroid_propeller_tables.xlsx` | Source data + propeller statistics (two sheets) |
 
-### Expected Runtime
+**Expected runtime**: 2–3 minutes on a standard desktop (dominated by
+loading the Seurat object).
 
-About 2–3 minutes on a standard desktop (dominated by loading the Seurat
-object).
+---
+
+## 5. Reproducibility
+
+Both analyses set a fixed random seed (`set.seed(42)`) so jitter, label
+placement, and any stochastic steps are deterministic across runs. The
+exact R version (4.4.1) and exact package versions are pinned by the
+Docker image and `renv.lock`.
+
+### Input data format
+
+The mounted data directory must contain the Seurat object(s) listed below
+under [Data Availability](#data-availability), as plain `.qs` files at the
+top level (no subdirectory).
 
 ---
 
 ## Data Availability
 
-The annotated Seurat object required for both the heatmap and the propeller
-compositional analysis is available on Figshare:
-DOI: 10.6084/m9.figshare.29425877
+The annotated Seurat objects are deposited on Figshare:
+**DOI: 10.6084/m9.figshare.29425877**
 
-- **Demo data**: Navigate the link and download: demo_seurat_objects.combined.cleansed.annotated.250428.qs 
-or click directly on https://figshare.com/ndownloader/files/55758923
+- **Demo data** — `demo_seurat_objects.combined.cleansed.annotated.250428.qs`
+  Direct download: <https://figshare.com/ndownloader/files/55758923>
+- **Full data** — `seurat_objects.combined.cleansed.annotated.250428.qs`
+  Navigate the DOI page above and download the full `.qs` file.
+- **Prebuilt Docker image tarball** — `faddosome-casp8-ripk3-4.4.1.tar.gz`
+  (~3.7 GB) — to be added to the same Figshare deposit.
 
-- **Full data object**:  Navigate the link and download: seurat_objects.combined.cleansed.annotated.250428.qs 
+---
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| `there is no package called 'rmarkdown'` (or any other package) | Host `.cache` mounted into the container shadowed the prebuilt library, or you ran `docker compose build` against an unpatched fork. | Edit `compose.yml` and remove any bind mount whose target is `/home/rstudio/.cache`, then `docker compose down && docker compose up -d`. With Option A the image already ships the library. |
+| RStudio login fails | Wrong password | Default is `1rstudio` unless changed in `SETUP.bash`. Check `PASSWORD=` in `compose.yml`. |
+| `Cannot find Seurat object at /home/rstudio/project/data/…` | Data directory not mounted, or filename mismatch | Re-run `SETUP.bash` and double-check the data source path and the exact filename. |
+| Browser shows port not reachable | Different port than expected | Look at the `ports:` line in `compose.yml`; the host port may be different from 50362. |
+
+---
 
 ## Contact
 
 For issues or questions:
-- **Technical problems**: Create GitHub issue
-- **Scientific questions**: Contact corresponding author
-- Include session info (`sessionInfo()`) when reporting bugs
+- **Technical problems**: open a GitHub issue (include `sessionInfo()` and
+  the `docker compose logs` output)
+- **Scientific questions**: contact the corresponding author
 
 ## License
 
-This project is released under the **MIT License** (see `LICENSE`). The custom
-analysis code is available without restriction. If you use it, please cite via
-the `CITATION.cff` file.
+This project is released under the **MIT License** (see `LICENSE`). The
+custom analysis code is available without restriction. If you use it,
+please cite via the `CITATION.cff` file.

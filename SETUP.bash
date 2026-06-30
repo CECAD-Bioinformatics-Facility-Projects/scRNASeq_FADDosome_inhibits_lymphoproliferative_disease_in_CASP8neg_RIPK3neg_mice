@@ -128,7 +128,7 @@ if [[ "${param,,}" == *"y"* ]]
 then
 	printf "services:
   rstudio:
-    image: rstudiorenvtidy:4.4.3
+    image: faddosome-casp8-ripk3:4.4.1
     build:
      context: .
      dockerfile: docker/Dockerfile

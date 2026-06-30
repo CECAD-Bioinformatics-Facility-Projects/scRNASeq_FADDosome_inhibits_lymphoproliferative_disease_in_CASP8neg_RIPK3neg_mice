@@ -1,15 +1,13 @@
 ---
-  title: "Single-Cell RNA-Seq analysis of BTLA immune cells in the spleen of RIPK3-/- Casp8CS/CS mice"
+title: "Single-Cell RNA-Seq analysis of BTLA immune cells in the spleen of RIPK3-/- Casp8CS/CS mice"
 author:
   - name: "Dr. Ali T. Abdallah"
-email: "ali.abdallah@uni-koeln.de"
-affiliation: "CECAD Research Center - Bioinformatics Facility"
+    email: "ali.abdallah@uni-koeln.de"
+    affiliation: "CECAD Research Center - Bioinformatics Facility"
 date: "2024-03-02"
-version: "1.0"
-site: bookdown::bookdown_site
 output:
   rmdformats::readthedown:
-  toc_depth: 3
+    toc_depth: 3
 ---
   
 # Heatmaps of preselected genes
