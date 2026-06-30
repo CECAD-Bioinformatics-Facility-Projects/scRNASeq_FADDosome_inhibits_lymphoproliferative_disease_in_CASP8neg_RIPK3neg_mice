@@ -30,9 +30,6 @@ Starting from a processed and annotated Seurat object, this demo:
 ## Data Loading and Setup
 
 ```{r setup, echo=TRUE, message=FALSE, warning=FALSE}
-# Knit relative to project root so renv/activate.R is found and paths are consistent
-knitr::opts_knit$set(root.dir = "/home/rstudio/project")
-
 # Record analysis start time
 start <- Sys.time()
 
