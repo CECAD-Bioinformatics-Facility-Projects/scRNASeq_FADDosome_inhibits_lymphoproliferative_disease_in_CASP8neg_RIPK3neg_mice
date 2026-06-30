@@ -199,18 +199,23 @@ intact. To restart later, just run `docker compose up -d` again.
 
 ## 3. Demo
 
-A small subset of the Seurat object is provided so you can test the
-heatmap workflow end-to-end in under a minute.
+The demo satisfies the Nature Research software policy requirement for a
+quick end-to-end test that verifies the environment and code are working
+correctly. It runs the **exact same analysis pipeline** as the full
+workflow but on a small bundled subset of the data, so it completes in
+**seconds rather than ~1.5 minutes**.
+
+> If you are a reviewer or editor checking software availability: running
+> the demo is all that is needed to verify reproducibility. The full
+> dataset is available on Figshare (see [Data Availability](#data-availability))
+> for complete reproduction of the paper figures.
 
 ### Run the demo
 
 1. In RStudio Server, open `demo/demo_of_generate_heatmaps.Rmd`.
-2. Click **Run → Run All** (or press <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd>).
-3. The notebook will render the demo heatmaps to PDF.
+2. Click **Knit** (or **Run → Run All**, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd>).
 
 ### Expected output
-
-After the demo completes you should find:
 
 | File | Description |
 |------|-------------|
@@ -224,7 +229,7 @@ file.exists("results/demo_hms_pp_selected.pdf")
 ```
 
 ### Expected runtime
-A few seconds to about a minute on a standard desktop.
+**A few seconds** on a standard desktop.
 
 ---
 
@@ -241,8 +246,9 @@ A few seconds to about a minute on a standard desktop.
 **Expected output**: `results/hms_pp_selected.pdf` — publication
 heatmaps matching the manuscript figures.
 
-**Expected runtime**: ~51 minutes on a standard desktop, dominated by
-loading the full Seurat object and computing pseudobulk aggregates.
+**Expected runtime**: ~1.5 minutes on a standard desktop (previously
+~51 minutes before the prebuilt image was available, as most of that
+time was `renv::restore` compiling packages during the build).
 
 ### 4.2 Erythroid compositional analysis (propeller plot)
 
@@ -250,6 +256,13 @@ This analysis tests whether the proportion of erythroid cells at each
 maturation stage (progenitor, erythroblast, late erythroblast) differs
 across the three CASP8 genotypes (WT, KO, CS), using the propeller
 compositional test (Phipson et al., *Bioinformatics* 2022).
+
+> **Note on demo:** A separate demo version of this analysis is not
+> provided. The propeller test requires sufficient cells per
+> sample/condition to produce statistically meaningful results — a
+> reduced subset would give degenerate output. The full analysis
+> completes in 2–3 minutes, which is short enough to serve as its own
+> demonstration.
 
 **Option A — RStudio (interactive):**
 Open `propeller_composition_report.Rmd` and click **Knit**.
