@@ -115,9 +115,6 @@ installation are required.
 
 > The image tarball is deposited at
 > <https://doi.org/10.6084/m9.figshare.32835902>
-> but is currently under embargo pending publication. A private review
-> link will be provided to editors/reviewers on request (see
-> [Data Availability](#data-availability)).
 
 ```bash
 # Download faddosome-casp8-ripk3-4.4.1.tar.gz from Figshare into the
