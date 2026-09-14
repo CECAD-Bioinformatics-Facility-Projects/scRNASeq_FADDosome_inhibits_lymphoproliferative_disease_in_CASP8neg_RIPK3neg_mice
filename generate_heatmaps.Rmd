@@ -76,7 +76,7 @@ pp$T %>% colnames()
 hms_pp <- list()
 for (ct in names(pp))
   hms_pp[[ct]] <- (plot_pp_heatmap(pp,
-                                   selected_samples  = c("WTR3", "WTR4", "KOR1", "KOR2", "CSR2", "CSR3"), # 10x Samples
+                                   selected_samples  = c("WTR3", "WTR4", "KOR1", "KOR2", "CSR2", "CSR3"), # 10x Samples. 2 samples per condition
                                    cell_type         = ct,
                                    genes             = genes,
                                    sample_order      = desired_sample_order,
