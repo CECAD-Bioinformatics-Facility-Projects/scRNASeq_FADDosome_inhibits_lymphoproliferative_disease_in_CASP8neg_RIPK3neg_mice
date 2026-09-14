@@ -72,10 +72,11 @@ pp$T %>% colnames()
 ## Build heatmaps (genes with missing values excluded)
 
 ```{r build-heatmaps-selected, fig.width=4.5, fig.height=15}
+
 hms_pp <- list()
 for (ct in names(pp))
   hms_pp[[ct]] <- (plot_pp_heatmap(pp,
-                                   selected_samples  = c("WTR3", "WTR4", "KOR1", "KOR2", "CSR2", "CSR3"),
+                                   selected_samples  = c("WTR3", "WTR4", "KOR1", "KOR2", "CSR2", "CSR3"), # 10x Samples
                                    cell_type         = ct,
                                    genes             = genes,
                                    sample_order      = desired_sample_order,
