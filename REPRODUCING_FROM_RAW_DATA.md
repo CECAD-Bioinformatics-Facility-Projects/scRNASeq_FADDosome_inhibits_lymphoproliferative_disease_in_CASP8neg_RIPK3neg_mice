@@ -13,7 +13,7 @@ published annotated Seurat object on Figshare.
 
 
 ## 0. System Requirements
-See [Data Availability](README.md#system-requirements) section for most of system
+See [System Requirements](README.md#system-requirements) section for most of system
 requirements. However, as this analysis is much more resource-intensive, you
 need increased hardware capabilities.
 
