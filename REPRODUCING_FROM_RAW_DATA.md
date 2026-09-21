@@ -14,15 +14,22 @@ published annotated Seurat object on Figshare.
 
 ## 0. System Requirements
 See [Data Availability](README.md#system-requirements) section for most of system
-requirements. However as this analysis is too resource consuming you need to
-increased hardware capabilities. 
+requirements. However, as this analysis is much more resource-intensive, you
+need increased hardware capabilities.
 
 ### Hardware
 - **RAM**: 128 GB recommended (64 GB minimum)
-- **Storage**: ~50 GB free
-  - ~5 GB for the input Seurat object
+- **Storage**: ~80 GB free per from-scratch run (more if keeping multiple
+  runs side by side, e.g. to compare `DOUBLET_MODE=cached` vs. `compute`)
+  - ~6 GB for the raw per-sample count matrices under `data/`
   - ~10 GB for the loaded Docker image
-  - remainder for intermediate results and outputs
+  - ~15 GB for the `_targets` cache
+  - ~30 GB for `results/` (integrated/annotated objects, figures, tables)
+  - remainder as headroom for other intermediate outputs
+  - add ~5 GB more if you use `ANNOTATION_MODE=reference` (optional,
+    default is `markers`), which needs the published annotated Seurat
+    object (`data/seurat_objects.combined.cleansed.annotated.250428.qs`,
+    from Figshare) as `REFERENCE_QS`
 - **CPU**: 4+ cores recommended
 - **Network**: required only for the one-time download of the Docker image
   tarball and the input data
