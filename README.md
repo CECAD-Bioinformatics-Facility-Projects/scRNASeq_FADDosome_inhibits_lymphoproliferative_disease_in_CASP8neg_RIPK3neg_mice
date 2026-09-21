@@ -342,10 +342,12 @@ The annotated Seurat objects are deposited on Figshare:
 - **Prebuilt Docker image tarball** — `faddosome-casp8-ripk3-rep2-4.4.1.tar.gz`
   (~3.7 GB) — DOI: <https://doi.org/10.6084/m9.figshare.32835902>
 - **Raw data (fastq files and raw count matrices)** — deposited at the Gene
-  Expression Omnibus (GEO), accession **GSE347887**. Only needed if you want
-  to reproduce the integrated object from raw data instead of starting from
+  Expression Omnibus (GEO), accession **GSE347887**. Raw counts are only needed if you want
+  to reproduce the integrated object instead of starting from
   the published annotated object — see
-  [REPRODUCING_FROM_RAW_DATA.md](REPRODUCING_FROM_RAW_DATA.md).
+  [REPRODUCING_FROM_RAW_DATA.md](REPRODUCING_FROM_RAW_DATA.md). The fastq files are only
+  needed if you want to rerun cellranger or celescope from scratch as described in the
+  method description of the manuscript.
 
 ---
 
