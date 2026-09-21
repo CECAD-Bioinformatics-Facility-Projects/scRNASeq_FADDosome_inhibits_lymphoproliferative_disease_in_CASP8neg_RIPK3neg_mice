@@ -60,7 +60,7 @@ This means also that you need to rename the downloaded files once you put them
 in the according folders as they have prefixes on GEO.
 
 > **Raw data availability:** The raw fastq files and the raw counts are available
-> via Gene Expression Omnibus repository (GEO) via accession number GSE347887
+> via Gene Expression Omnibus repository (GEO) via accession number GSE347887 [See also READEME, Data Availbility Section]
 
 P.S. To reproduce the raw counts from the fastq files refer to the versions of
 cellranger and celescope mentioned in the method description. In the following
