@@ -162,7 +162,7 @@ http://localhost:<PORT>
 ```
 
 Replace `<PORT>` with the port `SETUP.bash` wrote into `compose.yml` (look
-for the `ports:` entry, e.g. `"50362:8787"` → use `50362`).
+for the `ports:` entry, e.g. `"50363:8787"` → use `50363`).
 
 | | |
 |---|---|
