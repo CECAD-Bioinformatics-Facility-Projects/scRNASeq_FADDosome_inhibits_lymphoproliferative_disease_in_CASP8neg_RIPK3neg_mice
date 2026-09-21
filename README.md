@@ -320,17 +320,10 @@ top level (no subdirectory).
 The annotated Seurat objects are deposited on Figshare:
 **DOI: <https://doi.org/10.6084/m9.figshare.29425877>**
 
-> **Note for editors and reviewers:** The Figshare deposit is currently
-> under embargo pending publication. A private review link will be shared
-> directly with the editor and reviewers upon request. Once the paper is
-> accepted and published, all files will become publicly accessible via
-> the DOI above and the direct download links below.
-
 - **Demo data** — `demo_seurat_objects.combined.cleansed.annotated.250428.qs`
   - Public link (live now): <https://figshare.com/ndownloader/files/55758923>
 - **Full data** — `seurat_objects.combined.cleansed.annotated.250428.qs`
-  - Public link: *(to be activated on publication — navigate the DOI above)*
-  - Private review link: *(to be shared directly with editors/reviewers on request)*
+  - Public link: *https://doi.org/10.6084/m9.figshare.29425877*
 - **Cached doublet calls** — `doublets_original.qs` — the exact per-barcode
   doublet calls from the published run, needed only if you reproduce the
   integrated object from raw data (see
