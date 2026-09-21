@@ -356,7 +356,7 @@ For issues or questions:
 This repository was developed by the author with AI assistance. The author designed and 
 implemented the analysis. AI-assisted contributions, including code refactoring and 
 refinement, were reviewed and edited by the author. The author validated the workflow 
-and outputs and made all final methodological and interpretive decisions. Responsibility
+and outputs and made all methodological and interpretive decisions. Responsibility
 for the code, analyses, and conclusions rests with the author.
 
 
