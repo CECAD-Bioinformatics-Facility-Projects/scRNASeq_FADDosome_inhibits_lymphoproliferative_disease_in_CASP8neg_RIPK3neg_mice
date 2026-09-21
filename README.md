@@ -4,7 +4,7 @@ This repository contains the code and environment needed to reproduce
 figures from the paper on FADDosome inhibition effects on lymphoproliferative
 disease in CASP8-negative, RIPK3-negative mice.
 
-Two independent, self-contained analyses are provided:
+Two independent, self-contained downstream analyses/plots are provided:
 
 | Analysis | Script | Output |
 |----------|--------|--------|
@@ -20,10 +20,13 @@ input data (the annotated Seurat object on Figshare).
 
 ### Operating systems
 - **Linux**: Ubuntu 22.04.5 LTS (tested)
-- Should work on any OS that supports a recent Docker Engine (macOS, Windows
-  with WSL2), but only the Linux configuration above has been tested.
+- In principle, it is expected to work on any OS that supports a recent Docker 
+Engine (macOS, Windows with WSL2), but only the Linux configuration above has 
+been tested. And we cannot exclude that small adjustments need to be made in case
+of other OS.
 - It is also possible to run the analyses outside the container if every
-  R package in `renv.lock` is installed on the host — not tested.
+  R package in `renv.lock` is installed on the host - But also this was not 
+  tested.
 
 ### Software dependencies
 Tested with:
@@ -64,15 +67,18 @@ cd scRNASeq_FADDosome_inhibits_lymphoproliferative_disease_in_CASP8neg_RIPK3neg_
 
 ### Step 2 — Download the input data
 
-Download the annotated Seurat object(s) from Figshare (see
-[Data Availability](#data-availability) for direct links) into a directory
-on your host machine — for example `~/faddosome_data/`. You will mount this
-directory into the container in Step 3.
+Create a `data/` directory in the cloned repository and download the
+annotated Seurat object(s) from Figshare (see
+[Data Availability](#data-availability) for direct links) directly into it,
+e.g. `data/seurat_objects.combined.cleansed.annotated.qs`. Because the whole
+repository is bind-mounted into the container (Step 3), anything placed in
+`data/` is automatically visible inside the container at
+`/home/rstudio/project/data` — no extra Docker configuration is needed.
 
-### Step 3 — Configure mounts and port with `SETUP.bash`
+### Step 3 — Configure the container with `SETUP.bash`
 
 `SETUP.bash` interactively generates `compose.yml` with your project name,
-data mount, host port, and password.
+host port, and password.
 
 ```bash
 ./SETUP.bash
@@ -85,14 +91,12 @@ Answer the prompts as follows:
 | `Project Name` | any name, e.g. `faddosome-repro` |
 | `Mount the working directory…?` | `y` |
 | `Mount the Default R .cache…?` | **`n`** (mounting the host `.cache` shadows the prebuilt R library and will break Option A) |
-| `How many additional directories would you like to mount?` | `1` |
-| `Source` | absolute path to your data directory, e.g. `/home/youruser/faddosome_data` |
-| `Destination` | `/home/rstudio/project/data` |
+| `How many additional directories would you like to mount?` | `0` (the `data/` folder from Step 2 is already covered by the working-directory mount) |
 | `password` | `y` to keep the default `1rstudio`, or `c` to set your own |
 | `Do you accept…?` | `y` |
 | `Would you like me to start the container?` | `n` (you will start it explicitly in Step 4) |
 
-`SETUP.bash` writes `compose.yml` with `image: faddosome-casp8-ripk3:4.4.1`
+`SETUP.bash` writes `compose.yml` with `image: faddosome-casp8-ripk3-rep2:4.4.1`
 and a randomly chosen free host port. Note the port — you will need it to
 open RStudio in your browser.
 
@@ -108,7 +112,7 @@ and without depending on CRAN/Bioconductor staying online.
 
 #### Option A — Use the prebuilt image (recommended)
 
-The prebuilt image `faddosome-casp8-ripk3:4.4.1` contains R 4.4.1 and all
+The prebuilt image `faddosome-casp8-ripk3-rep2:4.4.1` contains R 4.4.1 and all
 required packages already installed. Download the image tarball from
 Figshare, load it, then start the container — no build step and no package
 installation are required.
@@ -117,13 +121,13 @@ installation are required.
 > <https://doi.org/10.6084/m9.figshare.32835902>
 
 ```bash
-# Download faddosome-casp8-ripk3-4.4.1.tar.gz from Figshare into the
+# Download faddosome-casp8-ripk3-rep2-4.4.1.tar.gz from Figshare into the
 # project root, then load it into your local Docker:
-docker load < faddosome-casp8-ripk3-4.4.1.tar.gz
+docker load < faddosome-casp8-ripk3-rep2-4.4.1.tar.gz
 
 # Verify the image is present:
 docker images | grep faddosome-casp8-ripk3
-# Expected:  faddosome-casp8-ripk3   4.4.1   <id>   <date>   ~9 GB
+# Expected:  faddosome-casp8-ripk3-rep2   4.4.1   <id>   <date>   ~9 GB
 
 # Start the container using the loaded image (DO NOT run `docker compose build`):
 docker compose up -d
@@ -288,6 +292,12 @@ docker compose exec -u rstudio rstudio \
 **Expected runtime**: 2–3 minutes on a standard desktop (dominated by
 loading the Seurat object).
 
+### 4.3 Reproducing the integrated object from raw data (optional)
+
+Both analyses above start from the published, annotated Seurat object.
+If you instead want to rebuild that object from the raw per-sample count
+matrices, see [REPRODUCING_FROM_RAW_DATA.md](REPRODUCING_FROM_RAW_DATA.md).
+
 ---
 
 ## 5. Reproducibility
@@ -321,8 +331,21 @@ The annotated Seurat objects are deposited on Figshare:
 - **Full data** — `seurat_objects.combined.cleansed.annotated.250428.qs`
   - Public link: *(to be activated on publication — navigate the DOI above)*
   - Private review link: *(to be shared directly with editors/reviewers on request)*
-- **Prebuilt Docker image tarball** — `faddosome-casp8-ripk3-4.4.1.tar.gz`
+- **Cached doublet calls** — `doublets_original.qs` — the exact per-barcode
+  doublet calls from the published run, needed only if you reproduce the
+  integrated object from raw data (see
+  [REPRODUCING_FROM_RAW_DATA.md](REPRODUCING_FROM_RAW_DATA.md)); optional,
+  as that pipeline can also call doublets from scratch. Deposited in the
+  same Figshare item as the Seurat objects above (DOI
+  <https://doi.org/10.6084/m9.figshare.29425877>), subject to the same
+  embargo note.
+- **Prebuilt Docker image tarball** — `faddosome-casp8-ripk3-rep2-4.4.1.tar.gz`
   (~3.7 GB) — DOI: <https://doi.org/10.6084/m9.figshare.32835902>
+- **Raw data (fastq files and raw count matrices)** — deposited at the Gene
+  Expression Omnibus (GEO), accession **GSE347887**. Only needed if you want
+  to reproduce the integrated object from raw data instead of starting from
+  the published annotated object — see
+  [REPRODUCING_FROM_RAW_DATA.md](REPRODUCING_FROM_RAW_DATA.md).
 
 ---
 
@@ -332,6 +355,15 @@ For issues or questions:
 - **Technical problems**: open a GitHub issue (include `sessionInfo()` and
   the `docker compose logs` output)
 - **Scientific questions**: contact the corresponding author
+
+## AI Assistance Disclosure
+
+This repository was developed by the author with AI assistance. The author designed and 
+implemented the analysis. AI-assisted contributions, including code refactoring and 
+refinement, were reviewed and edited by the author. The author validated the workflow 
+and outputs and made all final methodological and interpretive decisions. Responsibility
+for the code, analyses, and conclusions rests with the author.
+
 
 ## License
 

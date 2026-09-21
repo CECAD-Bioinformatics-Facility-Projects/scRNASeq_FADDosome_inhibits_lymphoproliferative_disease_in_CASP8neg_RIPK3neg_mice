@@ -3,7 +3,7 @@
 ## Required content
 
 - [x] **Compiled standalone software and/or source code**
-  Docker image (`faddosome-casp8-ripk3:4.4.1`) ships all compiled
+  Docker image (`faddosome-casp8-ripk3-rep2:4.4.1`) ships all compiled
   packages; source code in `R/`, `generate_heatmaps.Rmd`,
   `propeller_composition_report.Rmd`, `demo/demo_of_generate_heatmaps.Rmd`.
 

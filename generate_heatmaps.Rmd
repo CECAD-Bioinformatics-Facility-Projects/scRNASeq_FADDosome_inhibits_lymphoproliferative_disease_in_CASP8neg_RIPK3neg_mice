@@ -34,7 +34,12 @@ source("R/pseudobulk_dea.R")
 ## Load and prepare the Seurat object
 
 ```{r load-seurat}
-so.split          <- qs::qread("data/seurat_objects.combined.cleansed.annotated.250428.qs")
+# Override via the SEURAT_PATH env var (e.g. to point at a reproduced object).
+SEURAT_PATH <- Sys.getenv("SEURAT_PATH",
+                          unset = "data/seurat_objects.combined.cleansed.annotated.250428.qs")
+
+so.split          <- qs::qread(SEURAT_PATH)
+
 so.split[["RNA"]] <- split(so.split[["RNA"]], f = so.split$orig.ident)
 so.split@meta.data$condition <- gsub(pattern = "R[1-9]$", replacement = "", so.split$orig.ident)
 ```
@@ -113,8 +118,11 @@ for (ct in names(pp))
 ## Export heatmaps to PDF
 
 ```{r export-pdf, fig.width=4.5, fig.height=15}
-dir.create("results", showWarnings = FALSE, recursive = TRUE)
-pdf("results/hms_pp_selected.pdf", width = 3.75, height = 15)
+# Override via the OUT_DIR env var (e.g. to keep a reproduced run's outputs
+# alongside the reproduced object instead of the paper's own results/ folder).
+OUT_DIR <- Sys.getenv("OUT_DIR", unset = "results")
+dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
+pdf(file.path(OUT_DIR, "hms_pp_selected.pdf"), width = 3.75, height = 15)
 for (i in seq_along(hms_pp)) print(hms_pp[[i]])
 dev.off()
 ```

@@ -1,12 +1,13 @@
+name: faddosome-casp8-ripk3-validation-rep2
 services:
   rstudio:
-    image: faddosome-casp8-ripk3:4.4.1
+    image: faddosome-casp8-ripk3-rep2:4.4.1
     build:
      context: .
      dockerfile: docker/Dockerfile
-    container_name: scrnaseq-fritsch-et-al-2025
+    container_name: scrnaseq-fritsch-et-al-2025-rep2
     ports:
-      - "50362:8787"
+      - "50363:8787"
     volumes:
       - type: "bind"
         source: "./config"
@@ -14,9 +15,6 @@ services:
       - type: "bind"
         source: "."
         target: "/home/rstudio/project"
-      - type: "bind"
-        source: "/home/aabdallah/tank/RProjects/Kashkar/"
-        target: "/home/rstudio/project/data"
     environment:
       - USERNAME=aabdallah
       - USERID=1000

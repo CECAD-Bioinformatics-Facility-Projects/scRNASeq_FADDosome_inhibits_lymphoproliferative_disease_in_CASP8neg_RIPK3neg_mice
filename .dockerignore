@@ -18,3 +18,8 @@ renv/sandbox/
 
 # Distribution artifacts
 *.tar.gz
+
+# Reader-supplied/generated data, not needed in the build context
+data/
+results/
+_targets/

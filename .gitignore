@@ -9,3 +9,12 @@ MYREADME.md
 faddosome-casp8-ripk3-*.tar.gz
 figures/
 *.html
+
+# Reader-supplied input data (downloaded per README Step 2)
+data/*
+!data/.gitkeep
+
+# Generated pipeline output (regenerable via targets::tar_make() / reproduce_seurat_object.R)
+_targets/
+results/*
+!results/.gitkeep

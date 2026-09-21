@@ -43,171 +43,52 @@ library(openxlsx)
 # Purpose
 
 This report is a **self-contained, publicly shareable** script that reproduces
-the figures used to support the manuscript claim that **splenic erythropoiesis
-is perturbed across the three CASP8 genotypes**, with significance assessed by
-the **propeller** compositional test (Phipson *et al.*, *Bioinformatics* 2022).
-It was extracted from the larger erythropoiesis analysis so that the figures
-can be regenerated end-to-end from the annotated Seurat object alone.
+the barplot used in the manuscript. Significance was assessed by the 
+**propeller** compositional test (Phipson *et al.*, *Bioinformatics* 2022).
 
-Two views of the same propeller analysis are produced:
+In this script views of the same propeller analysis are produced:
 
-1. A **per-stage bar plot** of the genotype-level fractions (mean ± SEM,
+1. A **per-stage bar plot** of the genotype-level fractions (mean +/- SEM,
    one dot per mouse, propeller p-values), which shows the direction and
    magnitude of the compositional shift. **This is the figure selected for
    the manuscript.**
 2. A **QQ plot of propeller t-statistics**, faceted by pairwise contrast,
-   retained here as an internal diagnostic of the per-stage t-statistics.
+   retained here as an diagnostic of the per-stage t-statistics.
 
 Everything needed is below, in order:
 
-1. **Methods** — a concise description of why this analysis was chosen and how
-   the figures are produced.
-2. **Input** — load the annotated Seurat object.
-3. **Erythroid stage assignment** — define the three maturation stages.
-4. **Compositional test** — the propeller statistics.
-5. **Publication figure** — the per-stage bar plot (primary), exported at
+
+1. **Input**: load the annotated Seurat object after downloading it from FigShare (See README).
+2. **Erythroid stage assignment**: define the three maturation stages.
+3. **Compositional test**: the propeller statistics.
+4. **Publication figure**: the per-stage bar plot (primary), exported at
    publication quality. A QQ plot of propeller t-statistics is also produced
    as an internal diagnostic.
-6. **Statistics table** and **session info**.
+5. **Statistics table** and **session info**.
 
 ---
 
-# Methods
-
-### Experimental design
-
-CRISPR-engineered mice express either functional Caspase-8 (**WT**), no
-Caspase-8 protein (**KO**), or a catalytically dead Caspase-8-C362S scaffold
-(**CS**), all on a **RIPK3⁻/⁻** background. The spleen is a major site of mouse
-**stress erythropoiesis**: anaemic animals compensate by expanding splenic
-erythroid progenitors, so the size and maturation profile of the splenic
-erythroid compartment is a direct, quantitative phenotype of the genotype.
-
-| Label | RIPK3 | CASP8 | Phenotype |
-|-------|:-----:|-------|-----------|
-| WT    | KO    | wild-type (functional)         | healthy reference |
-| KO    | KO    | knock-out (protein absent)     | severe lymphoproliferative disease |
-| CS    | KO    | catalytic-dead C362S (present) | anaemia + splenomegaly + inflammation |
-
-### Why a compositional test, and why propeller
-
-The biological question — *does CASP8 status change how many erythroid cells of
-each maturation stage the spleen contains?* — is a question about **cell-type
-proportions** between groups of biological replicates. Three properties of this
-setting determine the appropriate method:
-
-- **Proportions are bounded and heteroscedastic.** A naive t-test on raw
-  fractions violates normality and equal-variance assumptions, especially near
-  0% or 100%.
-- **Replicates are few** (n = 2–4 mice per genotype). Per-cell tests
-  (e.g. a Wilcoxon test over thousands of cells) commit *pseudo-replication*:
-  they treat cells as independent when the true unit of replication is the
-  animal, inflating significance. A rank test on the replicate means, by
-  contrast, hits a hard p-value floor at these small n (it cannot resolve
-  below ≈ 0.057 for n = 3 vs 4).
-- **Information should be shared across the cell types tested.** With few
-  replicates, borrowing variance information across stages stabilises the
-  per-stage variance estimate.
-
-**propeller** (`speckle` package) is purpose-built for exactly this: it
-(i) computes per-replicate proportions, (ii) applies a **variance-stabilising
-arcsine-square-root transform**, and (iii) tests group contrasts with
-**`limma` empirical-Bayes moderated t-statistics**, which pool variance across
-cell types. It therefore respects the animal as the replication unit, handles
-the bounded variance of proportions, and yields continuous p-values that are not
-floored by small n; making it the standard choice for differential cell-type
-proportion analysis in replicated scRNA-seq.
-
-### Analysis pipeline that produces the figure
-
-1. **Cell selection.** Subset the annotated object to erythroid cells by
-   cell-type label.
-2. **Maturation-stage assignment.** Score every erythroid cell against three
-   curated marker panels (`Erythroid_Progenitor` -> `Erythroblast` ->
-   `Late_Erythroblast`) with Seurat `AddModuleScore`; assign each cell to its
-   highest-scoring panel (argmax). Cells detecting fewer than two markers of
-   their winning panel are removed as low-depth.
-3. **Proportions relative to total splenocytes.** Each stage proportion is
-   computed as a fraction of **all captured splenocytes** in that replicate
-   (the remaining cells form a single "Other" pool). This makes an expanded
-   erythroid compartment read as *taller* bars, which is the biology of
-   interest; it is achieved by running propeller on a cell-level label that
-   spans the entire dataset.
-4. **Statistics.** propeller on the arcsine-sqrt-transformed proportions with
-   robust empirical-Bayes moderation, for the three pairwise genotype contrasts
-   (CS vs WT, CS vs KO, WT vs KO). FDR is Benjamini–Hochberg across stages
-   within each contrast.
-5. **Figure.** A per-stage bar plot of genotype mean ±SEM with individual
-   mice overlaid and propeller p-value brackets, faceted by maturation
-   stage; exported as vector (PDF/SVG) and 300 dpi raster (PNG/TIFF) for
-   publication.
-
-### Manuscript Materials & Methods for this part:
-
-**Erythroid-cell identification and maturation-stage assignment.** Erythroid
-cells were selected by annotated cell-type label. Each erythroid cell was scored
-against three curated marker-gene panels representing successive maturation
-stages; erythroid progenitor, erythroblast and late erythroblast (gene panels
-listed in Supplementary Table [PLACEHOLDER]) using `AddModuleScore` in Seurat
-v5.2.0 [3]. Genes detected in fewer than 5% of erythroid cells were removed from the
-panels beforehand. Each cell was assigned to the stage with the highest module
-score (argmax), and cells expressing fewer than two genes of their assigned
-panel were excluded as low-depth cells.
-
-**Differential abundance (compositional) analysis.** For each animal, the number
-of cells in each erythroid stage was expressed as a proportion of all captured
-splenocytes.
-Differential abundance between genotypes was tested with propeller-test, as
-implemented in the R package speckle v1.6.0 [1]. Proportions were variance-stabilised by an
-arcsine-square-root transformation, and the three pairwise genotype contrasts
-(CS vs. WT, CS vs. KO, WT vs. KO) were assessed with empirical-Bayes
-moderated t-statistics computed with limma v3.62.2 [2] using robust variance
-estimation. Significance was assessed on the nominal (raw) propeller p-values
-at a two-sided threshold of p < 0.05; given the limited, pre-specified set of
-stages and the concordant direction of change across all three contrasts,
-no multiple-testing penalty was imposed for calling significance.
-Benjamini–Hochberg-adjusted p-values (FDR) are nonetheless reported alongside
-the raw values for transparency.
-
-**Data visualization.** Per-stage proportions were displayed as bar charts of
-the genotype mean +/- s.e.m. with individual animals overlaid as points,
-faceted by maturation stage; significance brackets report propeller P values.
-
-**Software and reproducibility.** All analyses were performed in R 4.4.1.
-Key packages: Seurat 5.2.0 and SeuratObject 5.0.2 (single-cell handling and
-module scoring) [3]; speckle 1.6.0 and limma 3.62.2 (compositional testing) [1,2]. The
-complete, version-pinned environment is provided as an `renv.lock` file and a
-Docker image, and the end-to-end analysis script that regenerates the figure and
-source-data tables from the annotated object is available at
-https://github.com/CECAD-Bioinformatics-Facility-Projects/scRNASeq_FADDosome_inhibits_lymphoproliferative_disease_in_CASP8neg_RIPK3neg_mice.
-The processed single-cell data have been deposited on Figshare
-(DOI: [10.6084/m9.figshare.29425877](https://doi.org/10.6084/m9.figshare.29425877)).
-
-### References
-
-1. Phipson B, Sim CB, Porrello ER, Hewitt AW, Powell J, Oshlack A. propeller:
-   testing for differences in cell type proportions in single cell data.
-   *Bioinformatics* 38(20):4720–4726, 2022.
-   DOI: [10.1093/bioinformatics/btac582](https://doi.org/10.1093/bioinformatics/btac582)
-2. Ritchie ME, Phipson B, Wu D, Hu Y, Law CW, Shi W, Smyth GK. limma powers
-   differential expression analyses for RNA-sequencing and microarray studies.
-   *Nucleic Acids Research* 43(7):e47, 2015.
-   DOI: [10.1093/nar/gkv007](https://doi.org/10.1093/nar/gkv007)
-3. Hao Y, Stuart T, Kowalski MH, Choudhary S, Hoffman P, Hartman A, et al.
-   Dictionary learning for integrative, multimodal and scalable single-cell
-   analysis. *Nature Biotechnology* 42:293–304, 2024.
-   DOI: [10.1038/s41587-023-01767-y](https://doi.org/10.1038/s41587-023-01767-y)
-
----
-
-# Input — annotated Seurat object
+# Input - annotated Seurat object
 
 ```{r load_object}
 # Annotated, cleansed Seurat object (all splenocytes, all genotypes).
-# Adjust this path if the object lives elsewhere.
-SEURAT_PATH <- "data/seurat_objects.combined.cleansed.annotated.250428.qs"
+# Override via the SEURAT_PATH env var (e.g. to point at a reproduced object).
+SEURAT_PATH <- Sys.getenv("SEURAT_PATH",
+                          unset = "data/seurat_objects.combined.cleansed.annotated.250428.qs")
+
+# Output directory for figures/tables. Override via the FIG_DIR env var (e.g.
+# to keep a reproduced run's outputs alongside the reproduced object instead
+# of the paper's own figures/ folder).
+FIG_DIR <- Sys.getenv("FIG_DIR", unset = "figures")
 
 so <- qs::qread(SEURAT_PATH)
+
+# Per-sample replicate identifier used for genotype assignment and the
+# propeller design matrix. Some reproduced objects lose per-sample identity in
+# orig.ident (e.g. reset to a single project name during integration); point
+# SAMPLE_COL at the metadata column that actually holds it in that case.
+SAMPLE_COL <- Sys.getenv("SAMPLE_COL", unset = "orig.ident")
+so$orig.ident <- so[[SAMPLE_COL]][[1]]
 
 # Genotype from the sample identifier.
 so$genotype <- dplyr::case_when(
@@ -227,9 +108,7 @@ geno_cols <- c(WT = "#4575B4", KO = "#FDAE61", CS = "#D73027")
 # Erythroid stage assignment
 
 The erythroid population is split into three maturation stages by
-marker-panel module scoring. This is the exact procedure used upstream of the
-manuscript figure; it is reproduced in detail here so the standalone script is 
-fully self-contained and reproducible.
+marker-panel module scoring.
 
 ```{r stage_assignment}
 # 1. Subset to erythroid cells by cell-type label.
@@ -299,15 +178,14 @@ knitr::kable(
   align   = c("l", "r", "l")
 )
 ```
-
 ---
 
 # Compositional test (propeller)
 
 Proportions are computed relative to **all captured splenocytes**: every
 non-erythroid cell is pooled into a single `Other` cluster so that the three
-erythroid-stage proportions are fractions of the whole spleen. propeller is then
-run on the three pairwise genotype contrasts.
+erythroid-stage proportions are fractions of the whole spleen. propeller-test is 
+then run on the three pairwise genotype contrasts.
 
 ```{r propeller_test}
 # Cell-level label spanning ALL splenocytes: stage label for erythroid cells,
@@ -401,12 +279,11 @@ stage_frac_df <- so_ery@meta.data %>%
 
 ---
 
-# Publication figure — per-stage fractions
+# Publication figure (per-stage fractions)
 
 The bar plot below is the manuscript figure: it shows the direction and
 magnitude of the genotype-level fractions per maturation stage, with
-propeller p-values reported in brackets, and is the visual companion to the
-per-replicate source-data table further below.
+propeller p-values reported in brackets.
 
 ```{r build_figure, fig.width=7.2, fig.height=3.4}
 nice_stage <- c(Erythroid_Progenitor = "Progenitor",
@@ -485,8 +362,8 @@ p_prop_fig
 
 ```{r export_figure}
 # Export publication-grade copies: vector (PDF, SVG) + 300 dpi raster (PNG, TIFF).
-dir.create("figures", showWarnings = FALSE)
-fig_base <- file.path("figures", "erythroid_propeller_composition")
+dir.create(FIG_DIR, showWarnings = FALSE, recursive = TRUE)
+fig_base <- file.path(FIG_DIR, "erythroid_propeller_composition")
 
 ggsave(paste0(fig_base, ".pdf"), p_prop_fig,
        width = 7.2, height = 3.4, device = cairo_pdf)
@@ -497,7 +374,7 @@ ggsave(paste0(fig_base, ".tiff"), p_prop_fig,
 try(ggsave(paste0(fig_base, ".svg"), p_prop_fig,
            width = 7.2, height = 3.4), silent = TRUE)
 
-message("Figure written to: ", normalizePath("figures"))
+message("Figure written to: ", normalizePath(FIG_DIR))
 ```
 
 **Figure (primary). Splenic erythroid composition across CASP8
@@ -607,8 +484,8 @@ p_qq_fig
 
 ```{r export_qq_figure}
 # Export copies of the diagnostic QQ figure.
-dir.create("figures", showWarnings = FALSE)
-qq_base <- file.path("figures", "erythroid_propeller_qq")
+dir.create(FIG_DIR, showWarnings = FALSE, recursive = TRUE)
+qq_base <- file.path(FIG_DIR, "erythroid_propeller_qq")
 
 ggsave(paste0(qq_base, ".pdf"), p_qq_fig,
        width = 9, height = 3.6, device = cairo_pdf)
@@ -619,7 +496,7 @@ ggsave(paste0(qq_base, ".tiff"), p_qq_fig,
 try(ggsave(paste0(qq_base, ".svg"), p_qq_fig,
            width = 9, height = 3.6), silent = TRUE)
 
-message("QQ figure written to: ", normalizePath("figures"))
+message("QQ figure written to: ", normalizePath(FIG_DIR))
 ```
 
 **Figure (diagnostic). Per-stage propeller t-statistics across pairwise
@@ -703,9 +580,10 @@ openxlsx::addWorksheet(wb, "Source Data")
 openxlsx::writeDataTable(wb, "Source Data", source_data)
 openxlsx::addWorksheet(wb, "Propeller Statistics")
 openxlsx::writeDataTable(wb, "Propeller Statistics", stats_out)
-dir.create("figures", showWarnings = FALSE)
-openxlsx::saveWorkbook(wb, "figures/erythroid_propeller_tables.xlsx", overwrite = TRUE)
-message("Excel workbook written to: figures/erythroid_propeller_tables.xlsx")
+dir.create(FIG_DIR, showWarnings = FALSE, recursive = TRUE)
+xlsx_path <- file.path(FIG_DIR, "erythroid_propeller_tables.xlsx")
+openxlsx::saveWorkbook(wb, xlsx_path, overwrite = TRUE)
+message("Excel workbook written to: ", xlsx_path)
 ```
 
 ---
